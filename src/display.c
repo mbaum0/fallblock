@@ -8,7 +8,7 @@ void drawBackdrop(Game *game);
 void drawScore(Game *game);
 
 static SDL_Color whiteColor = {255, 255, 255, 255};
-char scoreString[10];
+char scoreString[20];
 
 void clearScene(Game *game) {
     SDL_RenderClear(game->renderer);
@@ -61,7 +61,7 @@ void drawBackdrop(Game *game) {
 }
 
 void drawScore(Game *game) {
-    snprintf(scoreString, 10, "Score: %d", game->stage->score);
+    snprintf(scoreString, 20, "Score: %d", game->stage->score);
     SDL_Surface *scoreSurface =
         TTF_RenderText_Blended(game->stage->gameFont, scoreString, whiteColor);
     SDL_Texture *scoreTexture =

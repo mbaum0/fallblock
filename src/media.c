@@ -67,7 +67,7 @@ SDL_Texture *loadTexture(Game *game, char *filename) {
 }
 
 bool loadTextures(Game *game) {
-    game->stage->tileTexture = loadTexture(game, "assets/tiles.png");
+    game->stage->tileTexture = loadTexture(game, "assets/tileSprites.png");
     if (!game->stage->tileTexture) {
         printf("Failed to load texture: %s\n", IMG_GetError());
         return false;
