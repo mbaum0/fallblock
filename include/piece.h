@@ -1,7 +1,7 @@
 #pragma once
 #include <stdint.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef struct Piece Piece;
 typedef struct Tile Tile;
@@ -36,7 +36,6 @@ struct Piece {
     Tile *tiles[4];
     PieceType pieceType;
     PieceOrientation orientation;
-    Piece* lastPiece;
 };
 
 Piece *createNewPiece(uint32_t x, uint32_t y, PieceType type);

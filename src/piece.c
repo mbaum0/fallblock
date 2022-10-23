@@ -77,7 +77,6 @@ Piece *createRandomNewPiece(uint32_t x, uint32_t y) {
  * Create a new tetromino piece with coordinates x, y
  */
 Piece *createNewPiece(uint32_t x, uint32_t y, PieceType type) {
-    printf("Creating a new piece!\n");
     Piece *newPiece = calloc(sizeof(Piece), 1);
     newPiece->orientation = 0;
     newPiece->pieceType = type;
@@ -113,15 +112,6 @@ Piece *createNewPiece(uint32_t x, uint32_t y, PieceType type) {
     }
 
     return newPiece;
-}
-
-void destroyAllPieces(Piece *piece) {
-    Piece* loopPiece = piece;
-    while (loopPiece != NULL) {
-        Piece* nextPiece = loopPiece->lastPiece;
-        free(loopPiece);
-        loopPiece = nextPiece;
-    }
 }
 
 void movePiece(Piece *piece, uint32_t dx, uint32_t dy) {

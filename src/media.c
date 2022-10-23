@@ -72,11 +72,17 @@ bool loadTextures(Game *game) {
         printf("Failed to load texture: %s\n", IMG_GetError());
         return false;
     }
+    game->stage->backdropTexture = loadTexture(game, "assets/gameBackDrop.png");
+    if (!game->stage->backdropTexture) {
+        printf("Failed to load texture: %s\n", IMG_GetError());
+        return false;
+    }
     return true;
 }
 
 void destroyTextures(Game *game) {
     SDL_DestroyTexture(game->stage->tileTexture);
+    SDL_DestroyTexture(game->stage->backdropTexture);
     IMG_Quit();
 }
 

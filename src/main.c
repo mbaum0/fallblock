@@ -1,9 +1,9 @@
 #include "display.h"
 #include "game.h"
 #include "input.h"
+#include <math.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 
 Game game = {0};
 

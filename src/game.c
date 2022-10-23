@@ -83,8 +83,7 @@ static bool createNextPiece(Game *game) {
     int x = GAME_WIDTH / 2;
     int y = 0;
     Piece *piece = createRandomNewPiece(x, y);
-    //destroyPiece(game->stage->currentPiece);
-    piece->lastPiece = game->stage->currentPiece;
+    free(game->stage->currentPiece);
     game->stage->currentPiece = piece;
 
     return (isPieceValid(game, piece));
@@ -148,10 +147,11 @@ void destroyGame(Game *game) {
             free(game->stage->board[i][j]);
         }
     }
-    for (uint32_t i = 0; i < 4; i++){
+    for (uint32_t i = 0; i < 4; i++) {
         free(game->stage->currentPiece->tiles[i]);
     }
-    destroyAllPieces(game->stage->currentPiece);
+    // destroyAllPieces(game->stage->currentPiece);
+    free(game->stage->currentPiece);
     free(game->stage);
 }
 
@@ -167,7 +167,7 @@ void doLogic(Game *game) {
             if (!movePieceDown(game, piece)) {
                 // couldn't move piece down. lock in the tiles
                 lockCurrentPieceOnGameBoard(game);
-                checkForCompletedRows(game);
+                game->stage->score += (checkForCompletedRows(game) * 10);
                 createNextPiece(game);
             }
         }

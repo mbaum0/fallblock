@@ -4,6 +4,11 @@ void clearScene(Game *game);
 void presentScene(Game *game);
 void drawTiles(Game *game);
 void blitTile(Game *game, Tile *tile);
+void drawBackdrop(Game *game);
+void drawScore(Game *game);
+
+static SDL_Color whiteColor = {255, 255, 255, 255};
+char scoreString[10];
 
 void clearScene(Game *game) {
     SDL_RenderClear(game->renderer);
@@ -14,8 +19,8 @@ void presentScene(Game *game) {
 }
 
 void blitTile(Game *game, Tile *tile) {
-    uint32_t x = GB_TO_PX(tile->x);
-    uint32_t y = GB_TO_PX(tile->y);
+    uint32_t x = GB_TO_PX(tile->x) + GAMEBOARD_WIDTH_OFFSET;
+    uint32_t y = GB_TO_PX(tile->y) + GAMEBOARD_HEIGHT_OFFSET;
     SDL_Rect src;
     src.x = tile->color * BLOCK_SIZE;
     src.y = 0;
@@ -47,8 +52,35 @@ void drawTiles(Game *game) {
     }
 }
 
+void drawBackdrop(Game *game) {
+    SDL_Rect dst;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_QueryTexture(game->stage->backdropTexture, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy(game->renderer, game->stage->backdropTexture, NULL, &dst);
+}
+
+void drawScore(Game *game) {
+    snprintf(scoreString, 10, "Score: %d", game->stage->score);
+    SDL_Surface *scoreSurface =
+        TTF_RenderText_Blended(game->stage->gameFont, scoreString, whiteColor);
+    SDL_Texture *scoreTexture =
+        SDL_CreateTextureFromSurface(game->renderer, scoreSurface);
+    SDL_Rect scoreRect;
+    scoreRect.x = 45;
+    scoreRect.y = 45;
+    scoreRect.w = scoreSurface->w;
+    scoreRect.h = scoreSurface->h;
+    SDL_RenderCopy(game->renderer, scoreTexture, NULL, &scoreRect);
+
+    SDL_FreeSurface(scoreSurface);
+    SDL_DestroyTexture(scoreTexture);
+}
+
 void updateDisplay(Game *game) {
     clearScene(game);
+    drawBackdrop(game);
+    drawScore(game);
     drawTiles(game);
     presentScene(game);
 }
