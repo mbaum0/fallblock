@@ -1,0 +1,13 @@
+#pragma once
+
+#define BLOCK_SIZE 30
+#define GAME_HEIGHT 20
+#define GAME_WIDTH 10
+//#define SCREEN_WIDTH 540
+//#define SCREEN_HEIGHT 660
+#define SCREEN_WIDTH GAME_WIDTH *BLOCK_SIZE
+#define SCREEN_HEIGHT GAME_HEIGHT *BLOCK_SIZE
+
+#define MAX_KEYBOARD_KEYS 350
+
+#define GB_TO_PX(x) (x * BLOCK_SIZE)
