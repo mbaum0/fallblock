@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "piece.h": "c",
+        "game.h": "c",
+        "media.h": "c",
+        "display.h": "c"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/dev/Desktop/fallblock/build",
+            "binaryPath": "/home/dev/Desktop/fallblock/build/fallblock",
+            "binaryArgs": []
+        }
+    ]
+}
