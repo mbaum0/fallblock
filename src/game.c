@@ -207,7 +207,7 @@ bool doLogic(Game *game) {
                 lockCurrentPieceOnGameBoard(game);
                 uint32_t numCompletedRows = checkForCompletedRows(game);
                 updateScore(game, numCompletedRows);
-                if (!createNextPiece(game)){
+                if (!createNextPiece(game)) {
                     // piece is invalid, game over
                     return true;
                 }

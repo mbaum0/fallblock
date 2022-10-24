@@ -20,6 +20,8 @@ struct Stage {
     SDL_Texture *tileTexture;
     SDL_Texture *backdropTexture;
     TTF_Font *gameFont;
+    SDL_Texture *menuTexture;
+    SDL_Texture *menuBtnTexture;
 };
 
 struct Game {

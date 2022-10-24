@@ -1,6 +1,6 @@
 #include "media.h"
 
-SDL_Texture *loadTexture(Game *game, char *filename);
+bool loadTexture(SDL_Texture **dst, Game *game, char *filename);
 bool initSDL(Game *game);
 bool loadFonts(Game *game);
 bool loadTextures(Game *game);
@@ -58,31 +58,48 @@ bool loadFonts(Game *game) {
     return true;
 }
 
-SDL_Texture *loadTexture(Game *game, char *filename) {
+bool loadTexture(SDL_Texture **dst, Game *game, char *filename) {
     SDL_Texture *texture;
     SDL_LogMessage(SDL_LOG_CATEGORY_APPLICATION, SDL_LOG_PRIORITY_INFO,
                    "Loading %s", filename);
     texture = IMG_LoadTexture(game->renderer, filename);
-    return texture;
-}
 
-bool loadTextures(Game *game) {
-    game->stage->tileTexture = loadTexture(game, "assets/tileSprites.png");
-    if (!game->stage->tileTexture) {
-        printf("Failed to load texture: %s\n", IMG_GetError());
-        return false;
-    }
-    game->stage->backdropTexture = loadTexture(game, "assets/gameBackDrop.png");
-    if (!game->stage->backdropTexture) {
+    *dst = texture;
+    if (texture == NULL) {
         printf("Failed to load texture: %s\n", IMG_GetError());
         return false;
     }
     return true;
 }
 
+bool loadTextures(Game *game) {
+    // game->stage->tileTexture = loadTexture(game, "assets/tileSprites.png");
+    return (
+        loadTexture(&game->stage->tileTexture, game,
+                    "assets/tileSprites.png") &&
+        // if (!game->stage->tileTexture) {
+        //     printf("Failed to load texture: %s\n", IMG_GetError());
+        //     return false;
+        // }
+        loadTexture(&game->stage->backdropTexture, game,
+                    "assets/gameBackDrop.png") &&
+        // if (!game->stage->backdropTexture) {
+        //     printf("Failed to load texture: %s\n", IMG_GetError());
+        //     return false;
+        // }
+        loadTexture(&game->stage->menuBtnTexture, game, "assets/button.png") &&
+        // if (!game->stage->menuBtnTexture) {
+        //     printf("Failed to load texture: %s\n", IMG_GetError());
+        //     return false;
+        // }
+        loadTexture(&game->stage->menuTexture, game, "assets/mainMenu.png"));
+}
+
 void destroyTextures(Game *game) {
     SDL_DestroyTexture(game->stage->tileTexture);
     SDL_DestroyTexture(game->stage->backdropTexture);
+    SDL_DestroyTexture(game->stage->menuBtnTexture);
+    SDL_DestroyTexture(game->stage->menuTexture);
     IMG_Quit();
 }
 
