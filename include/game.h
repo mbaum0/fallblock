@@ -15,6 +15,8 @@ struct Stage {
     Piece *currentPiece;
     Tile *board[GAME_WIDTH][GAME_HEIGHT];
     uint32_t score;
+    uint32_t level;
+    float dropDelay;
     SDL_Texture *tileTexture;
     SDL_Texture *backdropTexture;
     TTF_Font *gameFont;

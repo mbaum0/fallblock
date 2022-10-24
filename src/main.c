@@ -10,13 +10,11 @@ Game game = {0};
 int main(void) {
     srand(time(0));
     initGame(&game);
-
     printf("Starting game!\n");
     while (processInput(&game)) {
         uint64_t start = SDL_GetPerformanceCounter();
         doLogic(&game);
         updateDisplay(&game);
-        game.ticks++;
         uint64_t end = SDL_GetPerformanceCounter();
         float elapsedMS =
             (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;

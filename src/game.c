@@ -11,7 +11,12 @@ static uint32_t checkForCompletedRows(Game *game);
 static void lockCurrentPieceOnGameBoard(Game *game);
 static void dropTilesAboveRow(Game *game, uint32_t row);
 static bool createNextPiece(Game *game);
+static float computeDropDelay(uint32_t level);
 void processControls(Game *game);
+void updateScore(Game *game, uint32_t numRows);
+static bool shouldStep(Game *game);
+
+const float secondsPerTick = 0.01667;
 
 static bool movePieceLeft(Game *game, Piece *piece) {
     movePiece(piece, -1, 0);
@@ -132,11 +137,40 @@ static void dropTilesAboveRow(Game *game, uint32_t row) {
     }
 }
 
+static float computeDropDelay(uint32_t level) {
+    float res = (0.8 - ((level - 1) * 0.007));
+    res = pow(res, level - 1);
+    return res;
+}
+
 void initGame(Game *game) {
     game->stage = calloc(sizeof(Stage), 1);
+    game->stage->level = 1;
+    game->stage->dropDelay = computeDropDelay(1);
     if (!initMedia(game)) {
         printf("Failed to initialize media!\n");
         exit(1);
+    }
+    printf("Game initialized! Level %d, dropDelay: %f\n", game->stage->level,
+           game->stage->dropDelay);
+}
+
+void updateScore(Game *game, uint32_t numRows) {
+    if (numRows == 1) {
+        game->stage->score += 1;
+    } else if (numRows == 2) {
+        game->stage->score += 3;
+    } else if (numRows == 3) {
+        game->stage->score += 5;
+    } else if (numRows == 4) {
+        game->stage->score += 8;
+    }
+
+    if (game->stage->score >= game->stage->level * 5) {
+        game->stage->level++;
+        game->stage->dropDelay = computeDropDelay(game->stage->level);
+        printf("Starting level %d\n", game->stage->level);
+        printf("New drop delay: %f\n", game->stage->dropDelay);
     }
 }
 
@@ -155,10 +189,14 @@ void destroyGame(Game *game) {
     free(game->stage);
 }
 
+static bool shouldStep(Game *game) {
+    float elapsedTime = game->ticks * secondsPerTick;
+    return (elapsedTime >= game->stage->dropDelay);
+}
+
 void doLogic(Game *game) {
     processControls(game);
-
-    if (game->ticks % 30 == 0) {
+    if (shouldStep(game)) {
         if (game->stage->currentPiece == NULL) {
             createNextPiece(game);
         } else {
@@ -167,10 +205,14 @@ void doLogic(Game *game) {
             if (!movePieceDown(game, piece)) {
                 // couldn't move piece down. lock in the tiles
                 lockCurrentPieceOnGameBoard(game);
-                game->stage->score += (checkForCompletedRows(game) * 10);
+                uint32_t numCompletedRows = checkForCompletedRows(game);
+                updateScore(game, numCompletedRows);
                 createNextPiece(game);
             }
         }
+        game->ticks = 0;
+    } else {
+        game->ticks++;
     }
 }
 
