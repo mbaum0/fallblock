@@ -30,6 +30,6 @@ struct Game {
     Stage *stage;
 };
 
-void doLogic(Game *game);
+bool doLogic(Game *game);
 void initGame(Game *game);
 void destroyGame(Game *game);

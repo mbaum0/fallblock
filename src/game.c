@@ -194,7 +194,7 @@ static bool shouldStep(Game *game) {
     return (elapsedTime >= game->stage->dropDelay);
 }
 
-void doLogic(Game *game) {
+bool doLogic(Game *game) {
     processControls(game);
     if (shouldStep(game)) {
         if (game->stage->currentPiece == NULL) {
@@ -207,13 +207,17 @@ void doLogic(Game *game) {
                 lockCurrentPieceOnGameBoard(game);
                 uint32_t numCompletedRows = checkForCompletedRows(game);
                 updateScore(game, numCompletedRows);
-                createNextPiece(game);
+                if (!createNextPiece(game)){
+                    // piece is invalid, game over
+                    return true;
+                }
             }
         }
         game->ticks = 0;
     } else {
         game->ticks++;
     }
+    return false;
 }
 
 static bool isOffScreen(uint32_t x, uint32_t y) {

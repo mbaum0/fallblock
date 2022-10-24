@@ -11,9 +11,10 @@ int main(void) {
     srand(time(0));
     initGame(&game);
     printf("Starting game!\n");
+    bool gameOver = false;
     while (processInput(&game)) {
         uint64_t start = SDL_GetPerformanceCounter();
-        doLogic(&game);
+        gameOver = doLogic(&game);
         updateDisplay(&game);
         uint64_t end = SDL_GetPerformanceCounter();
         float elapsedMS =
@@ -23,6 +24,11 @@ int main(void) {
         int32_t delay = floor(16.666f - elapsedMS);
         delay = (delay > 0) ? delay : 0;
         SDL_Delay(delay);
+
+        if (gameOver){
+            printf("You lose! Game over!\n");
+            break;
+        }
     }
 
     destroyGame(&game);
