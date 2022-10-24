@@ -77,10 +77,24 @@ void drawScore(Game *game) {
     SDL_DestroyTexture(scoreTexture);
 }
 
+void drawMenu(Game *game) {
+    SDL_Rect dst;
+    dst.x = 0;
+    dst.y = 0;
+    SDL_QueryTexture(game->stage->menuTexture, NULL, NULL, &dst.w, &dst.h);
+    SDL_RenderCopy(game->renderer, game->stage->menuTexture, NULL, &dst);
+}
+
 void updateDisplay(Game *game) {
     clearScene(game);
-    drawBackdrop(game);
-    drawScore(game);
-    drawTiles(game);
+    if (game->menu) {
+        drawMenu(game);
+
+    } else {
+        drawBackdrop(game);
+        drawScore(game);
+        drawTiles(game);
+    }
+
     presentScene(game);
 }

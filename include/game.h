@@ -4,12 +4,15 @@ typedef struct Game Game;
 typedef struct Stage Stage;
 
 #include "defs.h"
+#include "display.h"
+#include "input.h"
 #include "media.h"
 #include "piece.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include <time.h>
 
 struct Stage {
     Piece *currentPiece;
@@ -29,9 +32,11 @@ struct Game {
     SDL_Window *window;
     bool keyboard[MAX_KEYBOARD_KEYS];
     uint32_t ticks;
+    bool menu;
     Stage *stage;
 };
 
 bool doLogic(Game *game);
 void initGame(Game *game);
 void destroyGame(Game *game);
+void runGame(Game *game);

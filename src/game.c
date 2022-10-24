@@ -146,6 +146,7 @@ static float computeDropDelay(uint32_t level) {
 void initGame(Game *game) {
     game->stage = calloc(sizeof(Stage), 1);
     game->stage->level = 1;
+    game->menu = true;
     game->stage->dropDelay = computeDropDelay(1);
     if (!initMedia(game)) {
         printf("Failed to initialize media!\n");
@@ -181,11 +182,14 @@ void destroyGame(Game *game) {
             free(game->stage->board[i][j]);
         }
     }
-    for (uint32_t i = 0; i < 4; i++) {
-        free(game->stage->currentPiece->tiles[i]);
+
+    if (game->stage->currentPiece != NULL) {
+        for (uint32_t i = 0; i < 4; i++) {
+            free(game->stage->currentPiece->tiles[i]);
+        }
+        free(game->stage->currentPiece);
     }
-    // destroyAllPieces(game->stage->currentPiece);
-    free(game->stage->currentPiece);
+
     free(game->stage);
 }
 
@@ -236,4 +240,33 @@ static bool isPieceValid(Game *game, Piece *piece) {
 
 static bool spaceIsFree(Game *game, uint32_t x, uint32_t y) {
     return (game->stage->board[x][y] == NULL);
+}
+
+void runGame(Game *game) {
+    bool gameOver = false;
+    while (processInput(game)) {
+        if (!game->menu) {
+            uint64_t start = SDL_GetPerformanceCounter();
+            gameOver = doLogic(game);
+            uint64_t end = SDL_GetPerformanceCounter();
+            float elapsedMS =
+                (end - start) / (float)SDL_GetPerformanceFrequency() * 1000.0f;
+
+            // Cap to 60FPS
+            int32_t delay = floor(16.666f - elapsedMS);
+            delay = (delay > 0) ? delay : 0;
+            SDL_Delay(delay);
+
+            if (gameOver) {
+                printf("You lose! Game over!\n");
+                break;
+            }
+        } else {
+            if (game->keyboard[SDL_SCANCODE_S]) {
+                game->menu = false;
+                game->keyboard[SDL_SCANCODE_S] = false;
+            }
+        }
+        updateDisplay(game);
+    }
 }

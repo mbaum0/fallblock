@@ -4,7 +4,8 @@
         "game.h": "c",
         "media.h": "c",
         "display.h": "c",
-        "input.h": "c"
+        "input.h": "c",
+        "sdl_ttf.h": "c"
     },
     "makefile.launchConfigurations": [
         {
