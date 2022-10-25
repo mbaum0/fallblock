@@ -94,7 +94,8 @@ void processControls(Game *game) {
 static bool createNextPiece(Game *game) {
     int x = GAME_WIDTH / 2;
     int y = 0;
-    Piece *piece = createRandomNewPiece(x, y);
+    Piece *piece = createNewPiece(x, y, game->stage->nextPieceType);
+    game->stage->nextPieceType = getRandomPieceType();
     free(game->stage->currentPiece);
     game->stage->currentPiece = piece;
 
@@ -154,6 +155,7 @@ void initGame(Game *game) {
     game->stage = calloc(sizeof(Stage), 1);
     game->stage->level = 1;
     game->menu = true;
+    game->stage->nextPieceType = getRandomPieceType();
     game->stage->dropDelay = computeDropDelay(1);
     if (!initMedia(game)) {
         printf("Failed to initialize media!\n");

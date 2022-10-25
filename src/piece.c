@@ -39,7 +39,6 @@ void rotateLeftSkew(Piece *piece);
 void rotateRightSkew(Piece *piece);
 void rotateTee(Piece *piece);
 void applyTransformation(Piece *piece, const uint32_t *transformation);
-PieceType getRandomPieceType(void);
 
 TileColor getTypeColor(PieceType type) {
     switch (type) {
@@ -112,6 +111,13 @@ Piece *createNewPiece(int32_t x, int32_t y, PieceType type) {
     }
 
     return newPiece;
+}
+
+void destroyPiece(Piece *piece) {
+    for (uint32_t i = 0; i < 4; i++){
+        free(piece->tiles[i]);
+    }
+    free(piece);
 }
 
 void movePiece(Piece *piece, int32_t dx, int32_t dy) {

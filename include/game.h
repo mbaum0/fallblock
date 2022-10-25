@@ -16,6 +16,7 @@ typedef struct Stage Stage;
 
 struct Stage {
     Piece *currentPiece;
+    PieceType nextPieceType;
     Tile *board[GAME_WIDTH][GAME_HEIGHT];
     uint32_t score;
     uint32_t level;

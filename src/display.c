@@ -3,7 +3,7 @@
 void clearScene(Game *game);
 void presentScene(Game *game);
 void drawTiles(Game *game);
-void blitTile(Game *game, Tile *tile);
+void blitTile(Game *game, Tile *tile, bool doOffset);
 void drawBackdrop(Game *game);
 void drawScore(Game *game);
 
@@ -19,9 +19,13 @@ void presentScene(Game *game) {
     SDL_RenderPresent(game->renderer);
 }
 
-void blitTile(Game *game, Tile *tile) {
-    uint32_t x = GB_TO_PX(tile->x) + GAMEBOARD_WIDTH_OFFSET;
-    uint32_t y = GB_TO_PX(tile->y) + GAMEBOARD_HEIGHT_OFFSET;
+void blitTile(Game *game, Tile *tile, bool doOffset) {
+    uint32_t x = GB_TO_PX(tile->x);
+    uint32_t y = GB_TO_PX(tile->y);
+    if (doOffset) {
+        x += GAMEBOARD_WIDTH_OFFSET;
+        y += GAMEBOARD_HEIGHT_OFFSET;
+    } 
     SDL_Rect src;
     src.x = tile->color * BLOCK_SIZE;
     src.y = 0;
@@ -40,7 +44,7 @@ void drawTiles(Game *game) {
     for (uint32_t i = 0; i < GAME_WIDTH; i++) {
         for (uint32_t j = 0; j < GAME_HEIGHT; j++) {
             if ((t = game->stage->board[i][j])) {
-                blitTile(game, t);
+                blitTile(game, t, true);
             }
         }
     }
@@ -48,7 +52,14 @@ void drawTiles(Game *game) {
     if (game->stage->currentPiece != NULL) {
         for (uint32_t i = 0; i < 4; i++) {
             Tile *t = game->stage->currentPiece->tiles[i];
-            blitTile(game, t);
+            blitTile(game, t, true);
+            SDL_Rect rect;
+            rect.h = BLOCK_SIZE;
+            rect.w = BLOCK_SIZE;
+            rect.x = (t->x*BLOCK_SIZE) + GAMEBOARD_WIDTH_OFFSET;
+            rect.y = (t->y*BLOCK_SIZE) + GAMEBOARD_HEIGHT_OFFSET;
+            SDL_SetRenderDrawColor(game->renderer, 245, 245, 66, 100);
+            SDL_RenderDrawRect(game->renderer, &rect);
         }
     }
 }
@@ -95,6 +106,16 @@ void drawLevel(Game *game) {
     SDL_DestroyTexture(levelTexture);
 }
 
+void drawNextPiece(Game *game) {
+    if (game->stage->currentPiece != NULL) {
+        Piece* piece = createNewPiece(2, 5, game->stage->nextPieceType);
+        for (uint32_t i = 0; i < 4; i++){
+            blitTile(game, piece->tiles[i], false);
+        }
+        destroyPiece(piece);
+    }
+}
+
 void drawMenu(Game *game) {
     SDL_Rect dst;
     dst.x = 0;
@@ -107,12 +128,12 @@ void updateDisplay(Game *game) {
     clearScene(game);
     if (game->menu) {
         drawMenu(game);
-
     } else {
         drawBackdrop(game);
         drawScore(game);
         drawLevel(game);
         drawTiles(game);
+        drawNextPiece(game);
     }
 
     presentScene(game);

@@ -40,7 +40,8 @@ struct Piece {
 
 Piece *createNewPiece(int32_t x, int32_t y, PieceType type);
 Piece *createRandomNewPiece(int32_t x, int32_t y);
-void destroyAllPieces(Piece *piece);
 void movePiece(Piece *piece, int32_t dx, int32_t dy);
 void rotatePieceClockwise(Piece *piece);
 void rotatePieceCounterClockwise(Piece *piece);
+void destroyPiece(Piece *piece);
+PieceType getRandomPieceType(void);
