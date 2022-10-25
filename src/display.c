@@ -9,6 +9,7 @@ void drawScore(Game *game);
 
 static SDL_Color whiteColor = {255, 255, 255, 255};
 char scoreString[20];
+char levelString[20];
 
 void clearScene(Game *game) {
     SDL_RenderClear(game->renderer);
@@ -77,6 +78,23 @@ void drawScore(Game *game) {
     SDL_DestroyTexture(scoreTexture);
 }
 
+void drawLevel(Game *game) {
+    snprintf(levelString, 20, "Level: %d", game->stage->level);
+    SDL_Surface *levelSurface =
+        TTF_RenderText_Blended(game->stage->gameFont, levelString, whiteColor);
+    SDL_Texture *levelTexture =
+        SDL_CreateTextureFromSurface(game->renderer, levelSurface);
+    SDL_Rect levelRect;
+    levelRect.x = 45;
+    levelRect.y = 90;
+    levelRect.w = levelSurface->w;
+    levelRect.h = levelSurface->h;
+    SDL_RenderCopy(game->renderer, levelTexture, NULL, &levelRect);
+
+    SDL_FreeSurface(levelSurface);
+    SDL_DestroyTexture(levelTexture);
+}
+
 void drawMenu(Game *game) {
     SDL_Rect dst;
     dst.x = 0;
@@ -93,6 +111,7 @@ void updateDisplay(Game *game) {
     } else {
         drawBackdrop(game);
         drawScore(game);
+        drawLevel(game);
         drawTiles(game);
     }
 
