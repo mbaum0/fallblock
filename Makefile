@@ -11,6 +11,7 @@ BUILD_TARGET = $(BUILD_DIR)/$(OBJ_NAME)
 
 COMPILER_FLAGS = -std=c11 -o0 -Wall -Wextra -Wpedantic -Werror -g -gdwarf-4
 LINKER_FLAGS = -lSDL2 -lSDL2_image -lSDL2_ttf -lSDL2_mixer -lm
+OTHER_FLAGS = -DLOG_USE_COLOR
 
 CC = clang
 
@@ -23,7 +24,7 @@ format:
 
 $(BUILD_TARGET): $(SRC_FILES) $(HEADER_FILES)
 	mkdir -p $(BUILD_DIR)
-	$(CC) $(COMPILER_FLAGS) $(LINKER_FLAGS) $(INCLUDE_PATHS) $(SRC_FILES) -o $(BUILD_TARGET)
+	$(CC) $(COMPILER_FLAGS) $(LINKER_FLAGS) $(OTHER_FLAGS) $(INCLUDE_PATHS) $(SRC_FILES) -o $(BUILD_TARGET)
 
 clean:
 	rm -rf $(BUILD_DIR)

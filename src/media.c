@@ -10,7 +10,7 @@ void destroySDL(GameMedia *gameMedia);
 
 bool initSDL(GameMedia *gameMedia) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        LOG_ERROR("Couldn't initialize SDL: %s\n", SDL_GetError());
+        log_error("Couldn't initialize SDL: %s\n", SDL_GetError());
         return false;
     }
 
@@ -19,7 +19,7 @@ bool initSDL(GameMedia *gameMedia) {
                                          WINDOW_HEIGHT, 0);
 
     if (!gameMedia->window) {
-        LOG_ERROR("Failed to open %d x %d window: %s\n", WINDOW_WIDTH,
+        log_error("Failed to open %d x %d window: %s\n", WINDOW_WIDTH,
                   WINDOW_HEIGHT, SDL_GetError());
         return false;
     }
@@ -30,17 +30,17 @@ bool initSDL(GameMedia *gameMedia) {
         SDL_CreateRenderer(gameMedia->window, -1, SDL_RENDERER_ACCELERATED);
 
     if (!gameMedia->renderer) {
-        LOG_ERROR("Failed to create renderer: %s\n", SDL_GetError());
+        log_error("Failed to create renderer: %s\n", SDL_GetError());
         return false;
     }
 
     if (TTF_Init() < 0) {
-        LOG_ERROR("Couldn't initialize SDL_ttf: %s\n", TTF_GetError());
+        log_error("Couldn't initialize SDL_ttf: %s\n", TTF_GetError());
         return false;
     }
 
     if (IMG_Init(IMG_INIT_PNG) == 0) {
-        LOG_ERROR("Couldn't initialize SDL_image: %s\n", IMG_GetError());
+        log_error("Couldn't initialize SDL_image: %s\n", IMG_GetError());
         return false;
     }
 
@@ -51,20 +51,20 @@ bool loadFonts(GameMedia *gameMedia) {
     gameMedia->fonts->gameFont =
         TTF_OpenFont("assets/MouseMemoirs-Regular.ttf", 40);
     if (!gameMedia->fonts->gameFont) {
-        LOG_ERROR("Failed to open font: %s\n", TTF_GetError());
+        log_error("Failed to open font: %s\n", TTF_GetError());
         return false;
     }
     return true;
 }
 
 bool loadTexture(SDL_Texture **dst, GameMedia *gameMedia, char *filename) {
-    LOG_DEBUG("Loading texture: %s\n", filename);
+    log_debug("Loading texture: %s\n", filename);
     SDL_Texture *texture;
     texture = IMG_LoadTexture(gameMedia->renderer, filename);
 
     *dst = texture;
     if (texture == NULL) {
-        LOG_ERROR("Failed to load texture: %s\n", IMG_GetError());
+        log_error("Failed to load texture: %s\n", IMG_GetError());
         return false;
     }
     return true;

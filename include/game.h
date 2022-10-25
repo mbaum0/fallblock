@@ -1,6 +1,6 @@
 #pragma once
 #include "input.h"
-#include "logging.h"
+#include "log.h"
 #include "media.h"
 #include "piece.h"
 #include <stdbool.h>
