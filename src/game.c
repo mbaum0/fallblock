@@ -15,6 +15,7 @@ static float computeDropDelay(uint32_t level);
 void processControls(Game *game);
 void updateScore(Game *game, uint32_t numRows);
 static bool shouldStep(Game *game);
+static bool tryToMakePieceValid(Game *game, Piece *piece);
 
 const float secondsPerTick = 0.01667;
 
@@ -53,13 +54,19 @@ static bool rotatePiece(Game *game, Piece *piece, bool clockwise) {
     }
 
     if (!isPieceValid(game, piece)) {
-        if (clockwise) {
-            rotatePieceCounterClockwise(piece);
-        } else {
-            rotatePieceClockwise(piece);
+        // try to fix it;
+        printf("Piece isn't valid, trying to fix!\n");
+        bool didFix = tryToMakePieceValid(game, piece);
+        if (!didFix) {
+            if (clockwise) {
+                rotatePieceCounterClockwise(piece);
+            } else {
+                rotatePieceClockwise(piece);
+            }
+            return false;
         }
-        return false;
     }
+
     return true;
 }
 
@@ -236,6 +243,41 @@ static bool isPieceValid(Game *game, Piece *piece) {
         }
     }
     return true;
+}
+
+static bool tryToMakePieceValid(Game *game, Piece *piece) {
+    int32_t adjust = 0;
+    for (uint32_t i = 0; i < 4; i++) {
+        Tile *t = piece->tiles[i];
+        printf("x loc: %d\n", t->x);
+        if (t->x < 0) {
+            adjust++;
+            break;
+        } else if (t->x >= GAME_WIDTH) {
+            adjust--;
+            break;
+        }
+    }
+    printf("Attempting to fix tile with adjustment: %d\n", adjust);
+    for (uint32_t i = 0; i < 4; i++) {
+        piece->tiles[i]->x += adjust;
+    }
+    if (isPieceValid(game, piece)) {
+        return true;
+    } else {
+        // try one more time
+        for (uint32_t i = 0; i < 4; i++) {
+            piece->tiles[i]->x += adjust;
+        }
+        if (isPieceValid(game, piece)) {
+            return true;
+        }
+        printf("Failed to make valid piece:( \n");
+        for (uint32_t i = 0; i < 4; i++) {
+            piece->tiles[i]->x -= 2*adjust;
+        }
+        return false;
+    }
 }
 
 static bool spaceIsFree(Game *game, uint32_t x, uint32_t y) {

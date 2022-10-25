@@ -69,14 +69,14 @@ PieceType getRandomPieceType(void) {
     return typeArray[idx];
 }
 
-Piece *createRandomNewPiece(uint32_t x, uint32_t y) {
+Piece *createRandomNewPiece(int32_t x, int32_t y) {
     return createNewPiece(x, y, getRandomPieceType());
 }
 
 /**
  * Create a new tetromino piece with coordinates x, y
  */
-Piece *createNewPiece(uint32_t x, uint32_t y, PieceType type) {
+Piece *createNewPiece(int32_t x, int32_t y, PieceType type) {
     Piece *newPiece = calloc(sizeof(Piece), 1);
     newPiece->orientation = 0;
     newPiece->pieceType = type;
@@ -114,7 +114,7 @@ Piece *createNewPiece(uint32_t x, uint32_t y, PieceType type) {
     return newPiece;
 }
 
-void movePiece(Piece *piece, uint32_t dx, uint32_t dy) {
+void movePiece(Piece *piece, int32_t dx, int32_t dy) {
     for (int i = 0; i < 4; i++) {
         piece->tiles[i]->x += dx;
         piece->tiles[i]->y += dy;

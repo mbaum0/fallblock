@@ -27,8 +27,8 @@ typedef enum {
 typedef enum { A, B, C, D } PieceOrientation;
 
 struct Tile {
-    uint32_t x;
-    uint32_t y;
+    int32_t x;
+    int32_t y;
     TileColor color;
 };
 
@@ -38,9 +38,9 @@ struct Piece {
     PieceOrientation orientation;
 };
 
-Piece *createNewPiece(uint32_t x, uint32_t y, PieceType type);
-Piece *createRandomNewPiece(uint32_t x, uint32_t y);
+Piece *createNewPiece(int32_t x, int32_t y, PieceType type);
+Piece *createRandomNewPiece(int32_t x, int32_t y);
 void destroyAllPieces(Piece *piece);
-void movePiece(Piece *piece, uint32_t dx, uint32_t dy);
+void movePiece(Piece *piece, int32_t dx, int32_t dy);
 void rotatePieceClockwise(Piece *piece);
 void rotatePieceCounterClockwise(Piece *piece);
