@@ -5,26 +5,29 @@
 
 typedef struct Piece Piece;
 typedef struct Tile Tile;
+typedef struct TileLocation TileLocation;
 
 typedef enum {
-    RightL = 0,
-    LeftL = 1,
-    Straight = 2,
-    Square = 3,
-    LeftSkew = 4,
-    RightSkew = 5,
-    Tee = 6
+    Piece_I,
+    Piece_J,
+    Piece_L,
+    Piece_O,
+    Piece_S,
+    Piece_T,
+    Piece_Z
 } PieceType;
+
 typedef enum {
-    Yellow = 0,
-    Pink = 1,
-    Teal = 2,
-    Orange = 3,
-    Purple = 4,
-    Grey = 5,
-    Sky = 6
+    TC_Red,
+    TC_Blue,
+    TC_Yellow,
+    TC_Purple,
+    TC_Orange,
+    TC_Green,
+    TC_Pink
 } TileColor;
-typedef enum { A, B, C, D } PieceOrientation;
+
+typedef enum { PS_A, PS_B, PS_C, PS_D } PieceState;
 
 struct Tile {
     int32_t x;
@@ -35,13 +38,45 @@ struct Tile {
 struct Piece {
     Tile *tiles[4];
     PieceType pieceType;
-    PieceOrientation orientation;
+    PieceState pieceState;
 };
 
+/**
+ * @brief Create a New Piece
+ *
+ * @param x game x-coordinate
+ * @param y game y coordinate
+ * @param type PieceType to create
+ * @return Piece*
+ */
 Piece *createNewPiece(int32_t x, int32_t y, PieceType type);
-Piece *createRandomNewPiece(int32_t x, int32_t y);
+
+/**
+ * @brief Move a Piece
+ *
+ * @param piece piece to move
+ * @param dx number of game coordinates to move horizontally (may be negative)
+ * @param dy number of game coordiantes to move vertically (may be negative)
+ */
 void movePiece(Piece *piece, int32_t dx, int32_t dy);
+
+/**
+ * @brief Rotate a piece clockwise
+ *
+ * @param piece piece to rotate
+ */
 void rotatePieceClockwise(Piece *piece);
+
+/**
+ * @brief Rotate a piece counter-clockwise
+ *
+ * @param piece piece to rotate
+ */
 void rotatePieceCounterClockwise(Piece *piece);
-void destroyPiece(Piece *piece);
+
+/**
+ * @brief Get a random PieceType
+ *
+ * @return PieceType
+ */
 PieceType getRandomPieceType(void);
