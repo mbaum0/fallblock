@@ -1,4 +1,9 @@
 #pragma once
+
+typedef struct Game Game;
+typedef struct GameBoard GameBoard;
+
+#include "display.h"
 #include "input.h"
 #include "log.h"
 #include "media.h"
@@ -8,9 +13,6 @@
 
 #define GAME_WIDTH 10
 #define GAME_HEIGHT 20
-
-typedef struct Game Game;
-typedef struct GameBoard GameBoard;
 
 typedef enum { GS_Menu, GS_Playing, GS_Paused, GS_Gameover } GameState;
 

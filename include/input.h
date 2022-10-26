@@ -1,4 +1,5 @@
 #pragma once
+#include "log.h"
 #include <SDL2/SDL.h>
 #include <stdbool.h>
 

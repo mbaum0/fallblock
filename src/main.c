@@ -5,6 +5,6 @@
 int main(void) {
     srand(time(0));
     Game *theGame = createGame();
-    //runGame(theGame);
+    runGame(theGame);
     destroyGame(theGame);
 }

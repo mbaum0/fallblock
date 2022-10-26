@@ -21,3 +21,10 @@ void destroyGame(Game *game) {
     destroyMedia(&game->media);
     free(game);
 }
+
+void runGame(Game *game) {
+    while (!processInput(&game->keyboard)) {
+        updateDisplay(&game->media, &game->board);
+        SDL_Delay(16);
+    };
+}
