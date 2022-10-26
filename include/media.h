@@ -28,8 +28,8 @@ struct FontPack {
 struct GameMedia {
     SDL_Renderer *renderer;
     SDL_Window *window;
-    TexturePack *textures;
-    FontPack *fonts;
+    TexturePack textures;
+    FontPack fonts;
 };
 
 /**

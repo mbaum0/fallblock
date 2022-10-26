@@ -30,13 +30,12 @@ struct Game {
 };
 
 /**
- * @brief Initializes a game instance
+ * @brief Allocate and initialize a new Game instance. Must be free'd using
+ * destroyGame()
  *
- * @param game game instance to initialize
- * @return true if initialization was successful
- * @return false if initialization failed
+ * @return Game*
  */
-bool initGame(Game *game);
+Game *createGame(void);
 
 /**
  * @brief Cleanup any memory allocated by the game instance

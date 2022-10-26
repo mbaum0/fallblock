@@ -48,9 +48,9 @@ bool initSDL(GameMedia *gameMedia) {
 }
 
 bool loadFonts(GameMedia *gameMedia) {
-    gameMedia->fonts->gameFont =
+    gameMedia->fonts.gameFont =
         TTF_OpenFont("assets/MouseMemoirs-Regular.ttf", 40);
-    if (!gameMedia->fonts->gameFont) {
+    if (!gameMedia->fonts.gameFont) {
         log_error("Failed to open font: %s\n", TTF_GetError());
         return false;
     }
@@ -71,17 +71,17 @@ bool loadTexture(SDL_Texture **dst, GameMedia *gameMedia, char *filename) {
 }
 
 bool loadTextures(GameMedia *gameMedia) {
-    return (loadTexture(&gameMedia->textures->tiles, gameMedia,
-                        "assets/tileSprites.png"));
+    return (loadTexture(&(gameMedia->textures.tiles), gameMedia,
+                        "assets/tiles.png"));
 }
 
 void destroyTextures(GameMedia *gameMedia) {
-    SDL_DestroyTexture(gameMedia->textures->tiles);
+    SDL_DestroyTexture(gameMedia->textures.tiles);
     IMG_Quit();
 }
 
 void destroyFonts(GameMedia *gameMedia) {
-    TTF_CloseFont(gameMedia->fonts->gameFont);
+    TTF_CloseFont(gameMedia->fonts.gameFont);
     TTF_Quit();
 }
 
