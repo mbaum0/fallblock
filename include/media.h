@@ -11,6 +11,7 @@
 
 typedef struct TexturePack TexturePack;
 typedef struct FontPack FontPack;
+typedef struct ColorPack ColorPack;
 // typedef struct SoundPack SoundPack;
 typedef struct GameMedia GameMedia;
 
@@ -22,6 +23,10 @@ struct FontPack {
     TTF_Font *gameFont;
 };
 
+struct ColorPack {
+    SDL_Color white;
+};
+
 // struct SoundPack {
 // };
 
@@ -30,6 +35,7 @@ struct GameMedia {
     SDL_Window *window;
     TexturePack textures;
     FontPack fonts;
+    ColorPack colors;
 };
 
 /**

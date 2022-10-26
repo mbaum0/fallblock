@@ -2,6 +2,7 @@
 
 bool initSDL(GameMedia *gameMedia);
 bool loadFonts(GameMedia *gameMedia);
+void initColors(GameMedia *gameMedia);
 bool loadTexture(SDL_Texture **dst, GameMedia *gameMedia, char *filename);
 bool loadTextures(GameMedia *gameMedia);
 void destroyTextures(GameMedia *gameMedia);
@@ -57,6 +58,10 @@ bool loadFonts(GameMedia *gameMedia) {
     return true;
 }
 
+void initColors(GameMedia *gameMedia) {
+    gameMedia->colors.white = (SDL_Color){255, 255, 255, 255};
+}
+
 bool loadTexture(SDL_Texture **dst, GameMedia *gameMedia, char *filename) {
     log_debug("Loading texture: %s", filename);
     SDL_Texture *texture;
@@ -92,8 +97,10 @@ void destroySDL(GameMedia *gameMedia) {
 }
 
 bool initMedia(GameMedia *gameMedia) {
-    return (initSDL(gameMedia) && loadTextures(gameMedia) &&
-            loadFonts(gameMedia));
+    bool res =
+        (initSDL(gameMedia) && loadTextures(gameMedia) && loadFonts(gameMedia));
+    initColors(gameMedia);
+    return res;
 }
 
 void destroyMedia(GameMedia *gameMedia) {
