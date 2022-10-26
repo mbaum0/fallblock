@@ -19,4 +19,5 @@ Game *createGame(void) {
 
 void destroyGame(Game *game) {
     destroyMedia(&game->media);
+    free(game);
 }
