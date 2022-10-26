@@ -19,18 +19,19 @@ void presentScene(GameMedia *gameMedia) {
 
 void drawBackground(GameMedia *gameMedia) {
     SDL_Rect rect;
-    rect.w = WINDOW_WIDTH;
-    rect.h = WINDOW_HEIGHT;
-    rect.x = 0;
-    rect.y = 0;
-    SDL_SetRenderDrawColor(gameMedia->renderer, 201, 197, 183, 255);
-    SDL_RenderDrawRect(gameMedia->renderer, &rect);
 
     rect.w = TILE_SIZE * GAME_WIDTH;
     rect.h = TILE_SIZE * GAME_HEIGHT;
     rect.x = TILE_SIZE * 7;
     rect.y = TILE_SIZE * 1;
-    SDL_SetRenderDrawColor(gameMedia->renderer, 82, 79, 73, 255);
+    SDL_SetRenderDrawColor(gameMedia->renderer, 10, 79, 73, 255);
+    SDL_RenderDrawRect(gameMedia->renderer, &rect);
+
+    rect.w = WINDOW_WIDTH;
+    rect.h = WINDOW_HEIGHT;
+    rect.x = 0;
+    rect.y = 0;
+    SDL_SetRenderDrawColor(gameMedia->renderer, 201, 197, 183, 255);
     SDL_RenderDrawRect(gameMedia->renderer, &rect);
 }
 

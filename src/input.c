@@ -21,7 +21,7 @@ bool processInput(Keyboard *keyboard) {
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_QUIT:
-            log_debug("Received SDL_QUIT event\n");
+            log_debug("Received SDL_QUIT event");
             return true;
         case SDL_KEYDOWN:
             doKeyDown(keyboard, &event.key);

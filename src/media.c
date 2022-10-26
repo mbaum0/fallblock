@@ -10,7 +10,7 @@ void destroySDL(GameMedia *gameMedia);
 
 bool initSDL(GameMedia *gameMedia) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
-        log_error("Couldn't initialize SDL: %s\n", SDL_GetError());
+        log_error("Couldn't initialize SDL: %s", SDL_GetError());
         return false;
     }
 
@@ -19,7 +19,7 @@ bool initSDL(GameMedia *gameMedia) {
                                          WINDOW_HEIGHT, 0);
 
     if (!gameMedia->window) {
-        log_error("Failed to open %d x %d window: %s\n", WINDOW_WIDTH,
+        log_error("Failed to open %d x %d window: %s", WINDOW_WIDTH,
                   WINDOW_HEIGHT, SDL_GetError());
         return false;
     }
@@ -30,17 +30,17 @@ bool initSDL(GameMedia *gameMedia) {
         SDL_CreateRenderer(gameMedia->window, -1, SDL_RENDERER_ACCELERATED);
 
     if (!gameMedia->renderer) {
-        log_error("Failed to create renderer: %s\n", SDL_GetError());
+        log_error("Failed to create renderer: %s", SDL_GetError());
         return false;
     }
 
     if (TTF_Init() < 0) {
-        log_error("Couldn't initialize SDL_ttf: %s\n", TTF_GetError());
+        log_error("Couldn't initialize SDL_ttf: %s", TTF_GetError());
         return false;
     }
 
     if (IMG_Init(IMG_INIT_PNG) == 0) {
-        log_error("Couldn't initialize SDL_image: %s\n", IMG_GetError());
+        log_error("Couldn't initialize SDL_image: %s", IMG_GetError());
         return false;
     }
 
@@ -58,13 +58,13 @@ bool loadFonts(GameMedia *gameMedia) {
 }
 
 bool loadTexture(SDL_Texture **dst, GameMedia *gameMedia, char *filename) {
-    log_debug("Loading texture: %s\n", filename);
+    log_debug("Loading texture: %s", filename);
     SDL_Texture *texture;
     texture = IMG_LoadTexture(gameMedia->renderer, filename);
 
     *dst = texture;
     if (texture == NULL) {
-        log_error("Failed to load texture: %s\n", IMG_GetError());
+        log_error("Failed to load texture: %s", IMG_GetError());
         return false;
     }
     return true;
