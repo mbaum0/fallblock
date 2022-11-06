@@ -1,5 +1,8 @@
 #include "display.h"
 
+#define GB_X_TO_PX(x) (x * TILE_SIZE) + TILE_SIZE * 7
+#define GB_Y_TO_PX(y) (TILE_SIZE * GAME_HEIGHT) - (y* TILE_SIZE)
+
 void clearScene(GameMedia *gameMedia);
 void presentScene(GameMedia *gameMedia);
 void drawBackground(GameMedia *gameMedia);
@@ -40,6 +43,32 @@ void drawBackground(GameMedia *gameMedia) {
     SDL_RenderDrawRect(gameMedia->renderer, &rect);
 }
 
+void drawTile(Tile *tile, GameMedia *gameMedia) {
+    int32_t x = GB_X_TO_PX(tile->x);
+    int32_t y = GB_Y_TO_PX(tile->y);
+
+    SDL_Rect src;
+    src.x = tile->color * TILE_SIZE;
+    src.y = 0;
+    src.w = src.h = TILE_SIZE;
+
+    SDL_Rect dst;
+    dst.x = x;
+    dst.y = y;
+    dst.w = src.w;
+    dst.h = src.h;
+    SDL_RenderCopy(gameMedia->renderer, gameMedia->textures.tiles, &src, &dst);
+}
+
+void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia) {
+    if (gameBoard->activePiece != NULL) {
+        for (uint32_t i = 0; i < 4; i++) {
+            Tile *tile = gameBoard->activePiece->tiles[i];
+            drawTile(tile, gameMedia);
+        }
+    }
+}
+
 void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
               TTF_Font *font, SDL_Color color) {
     SDL_Surface *textSurface = TTF_RenderText_Blended(font, str, color);
@@ -71,5 +100,6 @@ void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard) {
     drawBackground(gameMedia);
     drawScore(gameBoard, gameMedia);
     drawLevel(gameBoard, gameMedia);
+    drawActivePiece(gameBoard, gameMedia);
     presentScene(gameMedia);
 }
