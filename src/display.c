@@ -69,6 +69,17 @@ void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia) {
     }
 }
 
+void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia){
+    for (uint32_t x = 0; x < GAME_WIDTH; x++){
+        for (uint32_t y = 0; y < GAME_HEIGHT; y++){
+            Tile *tile = gameBoard->playField[x][y];
+            if (tile != NULL){
+                drawTile(tile, gameMedia);
+            }
+        }
+    }
+}
+
 void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
               TTF_Font *font, SDL_Color color) {
     SDL_Surface *textSurface = TTF_RenderText_Blended(font, str, color);
@@ -80,6 +91,7 @@ void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
     textRect.w = textSurface->w;
     textRect.h = textSurface->h;
     SDL_RenderCopy(gameMedia->renderer, textTexture, NULL, &textRect);
+    SDL_FreeSurface(textSurface);
 }
 
 void drawScore(GameBoard *gameBoard, GameMedia *gameMedia) {
@@ -101,5 +113,6 @@ void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard) {
     drawScore(gameBoard, gameMedia);
     drawLevel(gameBoard, gameMedia);
     drawActivePiece(gameBoard, gameMedia);
+    drawLockedTiles(gameBoard, gameMedia);
     presentScene(gameMedia);
 }
