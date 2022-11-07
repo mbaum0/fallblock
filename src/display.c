@@ -1,7 +1,7 @@
 #include "display.h"
 
 #define GB_X_TO_PX(x) (x * TILE_SIZE) + TILE_SIZE * 7
-#define GB_Y_TO_PX(y) (TILE_SIZE * GAME_HEIGHT) - (y* TILE_SIZE)
+#define GB_Y_TO_PX(y) (TILE_SIZE * GAME_HEIGHT) - (y * TILE_SIZE)
 
 void clearScene(GameMedia *gameMedia);
 void presentScene(GameMedia *gameMedia);
@@ -69,11 +69,11 @@ void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia) {
     }
 }
 
-void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia){
-    for (uint32_t x = 0; x < GAME_WIDTH; x++){
-        for (uint32_t y = 0; y < GAME_HEIGHT; y++){
+void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia) {
+    for (uint32_t x = 0; x < GAME_WIDTH; x++) {
+        for (uint32_t y = 0; y < GAME_HEIGHT; y++) {
             Tile *tile = gameBoard->playField[x][y];
-            if (tile != NULL){
+            if (tile != NULL) {
                 drawTile(tile, gameMedia);
             }
         }

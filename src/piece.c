@@ -9,6 +9,13 @@ void setPieceT(Piece *piece);
 void setPieceZ(Piece *piece);
 TileColor getColorForType(PieceType type);
 
+void movePiece(Piece *piece, int32_t dx, int32_t dy) {
+    for (uint32_t i = 0; i < 4; i++) {
+        piece->tiles[i]->x += dx;
+        piece->tiles[i]->y += dy;
+    }
+}
+
 PieceType getRandomPieceType(void) {
     return (PieceType)(rand() % 7);
 }

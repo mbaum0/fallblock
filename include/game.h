@@ -28,7 +28,8 @@ struct Game {
     GameMedia media;
     GameBoard board;
     Keyboard keyboard;
-    uint32_t ticks;
+    uint64_t lastTick;
+    uint64_t lastDrop;
 };
 
 /**
