@@ -22,6 +22,7 @@ struct GameBoard {
     Tile *playField[GAME_WIDTH][GAME_HEIGHT];
     uint32_t score;
     uint32_t level;
+    uint64_t lastSuccessfulMove;
 };
 
 struct Game {

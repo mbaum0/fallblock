@@ -1,6 +1,7 @@
 #include "game.h"
 
 void createNextPiece(Game *game);
+bool shouldDropPiece(Game *game, uint32_t dropDelayMS);
 
 Game *createGame(void) {
     Game *newGame = calloc(1, sizeof(Game));
@@ -16,6 +17,7 @@ Game *createGame(void) {
     newGame->keyboard = (Keyboard){0};
     newGame->lastTick = SDL_GetPerformanceCounter();
     newGame->lastDrop = SDL_GetPerformanceCounter();
+    newGame->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
 
     return newGame;
 }
@@ -46,7 +48,7 @@ void destroyGame(Game *game) {
 void createNextPiece(Game *game) {
     PieceType type = getRandomPieceType();
     uint32_t spawnx = GAME_WIDTH / 2;
-    uint32_t spawny = GAME_HEIGHT + 1;
+    uint32_t spawny = GAME_HEIGHT;
     game->board.activePiece = createNewPiece(spawnx, spawny, type);
 }
 
@@ -89,6 +91,39 @@ bool canMovePiece(Game *game, Piece *piece, int32_t dx, int32_t dy) {
 
 void dropActivePiece(Game *game) {
     movePiece(game->board.activePiece, 0, -1);
+}
+
+void dropTilesAboveRow(Game *game, uint32_t row) {
+    for (uint32_t y = row + 1; y < GAME_HEIGHT; y++) {
+        for (uint32_t x = 0; x < GAME_WIDTH; x++) {
+            Tile *tile = game->board.playField[x][y];
+            if (tile != NULL) {
+                tile->y -= 1;
+                game->board.playField[x][y - 1] = tile;
+                game->board.playField[x][y] = NULL;
+            }
+        }
+    }
+}
+
+void processCompletedRows(Game *game) {
+    // check if a row is completed
+    for (uint32_t y = 0; y < GAME_HEIGHT; y++) {
+        uint32_t rowSum = 0;
+        for (uint32_t x = 0; x < GAME_WIDTH; x++) {
+            if (game->board.playField[x][y] != NULL) {
+                rowSum++;
+            }
+        }
+        if (rowSum >= GAME_WIDTH) {
+            // completed row :)
+            for (uint32_t x = 0; x < GAME_WIDTH; x++) {
+                free(game->board.playField[x][y]);
+                game->board.playField[x][y] = NULL;
+            }
+            dropTilesAboveRow(game, y);
+        }
+    }
 }
 
 void lockActivePieceOnBoard(Game *game) {
@@ -485,6 +520,7 @@ void doInputLogic(Game *game) {
         if (game->keyboard.keys[SDL_SCANCODE_RIGHT].pressed) {
             if (canMovePiece(game, game->board.activePiece, 1, 0)) {
                 movePiece(game->board.activePiece, 1, 0);
+                game->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
             }
             game->keyboard.keys[SDL_SCANCODE_RIGHT].pressed = false;
         }
@@ -492,6 +528,7 @@ void doInputLogic(Game *game) {
         if (game->keyboard.keys[SDL_SCANCODE_LEFT].pressed) {
             if (canMovePiece(game, game->board.activePiece, -1, 0)) {
                 movePiece(game->board.activePiece, -1, 0);
+                game->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
             }
 
             game->keyboard.keys[SDL_SCANCODE_LEFT].pressed = false;
@@ -506,27 +543,47 @@ void doInputLogic(Game *game) {
 
         if (game->keyboard.keys[SDL_SCANCODE_UP].pressed ||
             game->keyboard.keys[SDL_SCANCODE_X].pressed) {
-            attemptActivePieceRotation(game, true);
+            if (attemptActivePieceRotation(game, true)) {
+                game->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
+            }
             game->keyboard.keys[SDL_SCANCODE_UP].pressed = false;
             game->keyboard.keys[SDL_SCANCODE_X].pressed = false;
         }
 
         if (game->keyboard.keys[SDL_SCANCODE_Z].pressed) {
-            attemptActivePieceRotation(game, false);
+            if (attemptActivePieceRotation(game, false)) {
+                game->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
+            }
             game->keyboard.keys[SDL_SCANCODE_Z].pressed = false;
         }
     }
+}
+
+bool timeHasOccurredSinceLastSuccessfulMove(Game *game, uint32_t time_ms) {
+    uint64_t currentTick = SDL_GetPerformanceCounter();
+    uint64_t elapsedTicks = (currentTick - game->board.lastSuccessfulMove);
+    float tickFreq = (float)SDL_GetPerformanceFrequency();
+    float elapsedMS = (elapsedTicks / tickFreq) * 1000;
+
+    return (elapsedMS >= time_ms);
 }
 
 void doPieceLogic(Game *game) {
     // if piece doesn't exist, create one
     if (game->board.activePiece == NULL) {
         createNextPiece(game);
-    } else {
+    }
+
+    if (shouldDropPiece(game, 800)) {
         if (canActivePieceDrop(game)) {
             dropActivePiece(game);
         } else {
-            lockActivePieceOnBoard(game);
+            if (timeHasOccurredSinceLastSuccessfulMove(game, 200)) {
+                log_debug("Locking piece on board");
+                lockActivePieceOnBoard(game);
+            } else {
+                log_debug("Lock delay preventing piece from locking.");
+            }
         }
     }
 }
@@ -563,10 +620,10 @@ void runGame(Game *game) {
     while (!processInput(&game->keyboard)) {
         if (shouldTick(game)) {
             updateDisplay(&game->media, &game->board);
-            if (shouldDropPiece(game, 800)) {
-                doPieceLogic(game);
-            }
+
+            doPieceLogic(game);
         }
         doInputLogic(game);
+        processCompletedRows(game);
     };
 }
