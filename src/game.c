@@ -72,15 +72,15 @@ bool canActivePieceDrop(Game *game) {
     return true;
 }
 
-bool canMoveActivePiece(Game *game, int32_t dx) {
+bool canMovePiece(Game *game, Piece *piece, int32_t dx, int32_t dy) {
     for (uint32_t i = 0; i < 4; i++) {
-        int32_t newX = game->board.activePiece->tiles[i]->x + dx;
-        int32_t y = game->board.activePiece->tiles[i]->y;
-        if (newX < 0 || newX >= GAME_WIDTH) {
+        int32_t newX = piece->tiles[i]->x + dx;
+        int32_t newY = piece->tiles[i]->y + dy;
+        if (newX < 0 || newX >= GAME_WIDTH || newY < 0) {
             return false;
         }
 
-        if (game->board.playField[newX][y] != NULL) {
+        if (game->board.playField[newX][newY] != NULL) {
             return false;
         }
     }
@@ -100,17 +100,397 @@ void lockActivePieceOnBoard(Game *game) {
     game->board.activePiece = NULL;
 }
 
+bool attemptKick(Game *game, Piece *piece, int32_t dx, int32_t dy) {
+    if (canMovePiece(game, piece, dx, dy)) {
+        movePiece(piece, dx, dy);
+        return true;
+    }
+    return false;
+}
+
+bool attemptKick_I(Game *game, Piece *piece, bool clockwise) {
+    if (clockwise) {
+        switch (piece->pieceState) {
+        case PS_A:
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 1A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -2, 0)) {
+                log_debug("Kick test 2A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, -2)) {
+                log_debug("Kick test 3A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -2, 1)) {
+                log_debug("Kick test 4A successful");
+                return true;
+            }
+            break;
+        case PS_B:
+            if (attemptKick(game, piece, -2, 0)) {
+                log_debug("Kick test 1B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 2B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -2, -1)) {
+                log_debug("Kick test 3B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 2)) {
+                log_debug("Kick test 4B successful");
+                return true;
+            }
+            break;
+        case PS_C:
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 1C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 2, 0)) {
+                log_debug("Kick test 2C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, 2)) {
+                log_debug("Kick test 3C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 2, -1)) {
+                log_debug("Kick test 4C successful");
+                return true;
+            }
+            break;
+        case PS_D:
+            if (attemptKick(game, piece, 2, 0)) {
+                log_debug("Kick test 1D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 2D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 2, 1)) {
+                log_debug("Kick test 3D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, -2)) {
+                log_debug("Kick test 4D successful");
+                return true;
+            }
+            break;
+        }
+    } else {
+        switch (piece->pieceState) {
+        case PS_A:
+            if (attemptKick(game, piece, 2, 0)) {
+                log_debug("Kick test 1A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 2A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 2, 1)) {
+                log_debug("Kick test 3A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, -2)) {
+                log_debug("Kick test 4A successful");
+                return true;
+            }
+            break;
+        case PS_B:
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 1B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -2, 0)) {
+                log_debug("Kick test 2B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, -2)) {
+                log_debug("Kick test 3B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -2, 1)) {
+                log_debug("Kick test 4B successful");
+                return true;
+            }
+            break;
+        case PS_C:
+            if (attemptKick(game, piece, -2, 0)) {
+                log_debug("Kick test 1C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 2C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -2, -1)) {
+                log_debug("Kick test 3C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 2)) {
+                log_debug("Kick test 4C successful");
+                return true;
+            }
+            break;
+        case PS_D:
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 1D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 2, 0)) {
+                log_debug("Kick test 2D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, 2)) {
+                log_debug("Kick test 3D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 2, -1)) {
+                log_debug("Kick test 4D successful");
+                return true;
+            }
+            break;
+        }
+    }
+    return false;
+}
+
+bool attemptKick_JLTSZ(Game *game, Piece *piece, bool clockwise) {
+    if (clockwise) {
+        switch (piece->pieceState) {
+        case PS_A:
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 1A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, -1)) {
+                log_debug("Kick test 2A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, 2)) {
+                log_debug("Kick test 3A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, -2)) {
+                log_debug("Kick test 4A successful");
+                return true;
+            }
+            break;
+        case PS_B:
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 1B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, 1)) {
+                log_debug("Kick test 2B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, -2)) {
+                log_debug("Kick test 3B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, -2)) {
+                log_debug("Kick test 4B successful");
+                return true;
+            }
+            break;
+        case PS_C:
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 1C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, -1)) {
+                log_debug("Kick test 2C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, 2)) {
+                log_debug("Kick test 3C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 2)) {
+                log_debug("Kick test 4C successful");
+                return true;
+            }
+            break;
+        case PS_D:
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 1D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 1)) {
+                log_debug("Kick test 2D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, -2)) {
+                log_debug("Kick test 3D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, -2)) {
+                log_debug("Kick test 4D successful");
+                return true;
+            }
+            break;
+        }
+    } else {
+        switch (piece->pieceState) {
+        case PS_A:
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 1A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, -1)) {
+                log_debug("Kick test 2A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, 2)) {
+                log_debug("Kick test 3A successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 2)) {
+                log_debug("Kick test 4A successful");
+                return true;
+            }
+            break;
+        case PS_B:
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 1B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, 1)) {
+                log_debug("Kick test 2B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, -2)) {
+                log_debug("Kick test 3B successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, -2)) {
+                log_debug("Kick test 4B successful");
+                return true;
+            }
+            break;
+        case PS_C:
+            if (attemptKick(game, piece, -1, 0)) {
+                log_debug("Kick test 1C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, -1)) {
+                log_debug("Kick test 2C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, 2)) {
+                log_debug("Kick test 3C successful");
+                return true;
+            }
+            if (attemptKick(game, piece, -1, 2)) {
+                log_debug("Kick test 4C successful");
+                return true;
+            }
+            break;
+        case PS_D:
+            if (attemptKick(game, piece, 1, 0)) {
+                log_debug("Kick test 1D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, 1)) {
+                log_debug("Kick test 2D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 0, -2)) {
+                log_debug("Kick test 3D successful");
+                return true;
+            }
+            if (attemptKick(game, piece, 1, -2)) {
+                log_debug("Kick test 4D successful");
+                return true;
+            }
+            break;
+        }
+    }
+    return false;
+}
+
+bool attemptActivePieceRotation(Game *game, bool clockwise) {
+    Piece *activePiece = game->board.activePiece;
+    if (clockwise) {
+        rotatePieceClockwise(activePiece);
+        if (canMovePiece(game, activePiece, 0, 0)) {
+            return true;
+        }
+        log_debug("Basic rotation failed, attempting kicks");
+        // attempt kicks
+        switch (game->board.activePiece->pieceType) {
+        case Piece_J:
+        case Piece_L:
+        case Piece_T:
+        case Piece_S:
+        case Piece_Z:
+            if (!attemptKick_JLTSZ(game, activePiece, clockwise)) {
+                // all kicks failed, revert
+                rotatePieceCounterClockwise(activePiece);
+                log_debug("Kicks failed. Piece will not rotate");
+                return false;
+            }
+            break;
+        case Piece_I:
+            if (!attemptKick_I(game, activePiece, clockwise)) {
+                rotatePieceCounterClockwise(activePiece);
+                return false;
+            }
+        case Piece_O:
+            return false;
+        }
+    } else {
+        rotatePieceCounterClockwise(activePiece);
+        if (canMovePiece(game, activePiece, 0, 0)) {
+            return true;
+        }
+        log_debug("Basic rotation failed, attempting kicks");
+        // attempt kicks
+        switch (game->board.activePiece->pieceType) {
+        case Piece_J:
+        case Piece_L:
+        case Piece_T:
+        case Piece_S:
+        case Piece_Z:
+            if (!attemptKick_JLTSZ(game, activePiece, clockwise)) {
+                // all kicks failed, revert
+                rotatePieceClockwise(activePiece);
+                log_debug("Kicks failed. Piece will not rotate");
+                return false;
+            }
+            break;
+        case Piece_I:
+            if (!attemptKick_I(game, activePiece, clockwise)) {
+                rotatePieceClockwise(activePiece);
+                return false;
+            }
+        case Piece_O:
+            return false;
+        }
+    }
+    return false;
+}
+
 void doInputLogic(Game *game) {
     if (game->board.activePiece != NULL) {
         if (game->keyboard.keys[SDL_SCANCODE_RIGHT].pressed) {
-            if (canMoveActivePiece(game, 1)) {
+            if (canMovePiece(game, game->board.activePiece, 1, 0)) {
                 movePiece(game->board.activePiece, 1, 0);
             }
             game->keyboard.keys[SDL_SCANCODE_RIGHT].pressed = false;
         }
 
         if (game->keyboard.keys[SDL_SCANCODE_LEFT].pressed) {
-            if (canMoveActivePiece(game, -1)) {
+            if (canMovePiece(game, game->board.activePiece, -1, 0)) {
                 movePiece(game->board.activePiece, -1, 0);
             }
 
@@ -126,13 +506,13 @@ void doInputLogic(Game *game) {
 
         if (game->keyboard.keys[SDL_SCANCODE_UP].pressed ||
             game->keyboard.keys[SDL_SCANCODE_X].pressed) {
-            rotatePieceClockwise(game->board.activePiece);
+            attemptActivePieceRotation(game, true);
             game->keyboard.keys[SDL_SCANCODE_UP].pressed = false;
             game->keyboard.keys[SDL_SCANCODE_X].pressed = false;
         }
 
         if (game->keyboard.keys[SDL_SCANCODE_Z].pressed) {
-            rotatePieceCounterClockwise(game->board.activePiece);
+            attemptActivePieceRotation(game, false);
             game->keyboard.keys[SDL_SCANCODE_Z].pressed = false;
         }
     }
@@ -183,7 +563,7 @@ void runGame(Game *game) {
     while (!processInput(&game->keyboard)) {
         if (shouldTick(game)) {
             updateDisplay(&game->media, &game->board);
-            if (shouldDropPiece(game, 500)) {
+            if (shouldDropPiece(game, 800)) {
                 doPieceLogic(game);
             }
         }
