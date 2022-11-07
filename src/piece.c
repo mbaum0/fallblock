@@ -74,10 +74,10 @@ void setPieceT(Piece *piece) {
     piece->tiles[3]->y += 1;
 }
 void setPieceZ(Piece *piece) {
-    piece->tiles[1]->x += 1;
+    piece->tiles[1]->y += 1;
     piece->tiles[2]->y += 1;
+    piece->tiles[2]->x -= 1;
     piece->tiles[3]->x += 1;
-    piece->tiles[3]->y += 1;
 }
 
 Piece *createNewPiece(int32_t x, int32_t y, PieceType type) {
@@ -114,4 +114,82 @@ Piece *createNewPiece(int32_t x, int32_t y, PieceType type) {
         break;
     }
     return newPiece;
+}
+
+void rotatePieceCounterClockwise(Piece *piece) {
+    if (piece->pieceType == Piece_O) {
+        // don't rotate O type
+        return;
+    }
+
+    Tile *baseTile = piece->tiles[0];
+    PieceState nextState = PS_A;
+    for (uint32_t i = 1; i < 4; i++) {
+        Tile *tile = piece->tiles[i];
+        int32_t shiftX = piece->tiles[i]->x - baseTile->x;
+        int32_t shiftY = piece->tiles[i]->y - baseTile->y;
+
+        switch (piece->pieceState) {
+        case PS_A:
+            tile->x = (shiftY * -1) + baseTile->x;
+            tile->y = shiftX + baseTile->y;
+            nextState = PS_B;
+            break;
+        case PS_B:
+            tile->x = (shiftY * -1) + baseTile->x;
+            tile->y = shiftX + baseTile->y;
+            nextState = PS_C;
+            break;
+        case PS_C:
+            tile->x = (shiftY * -1) + baseTile->x;
+            tile->y = shiftX + baseTile->y;
+            nextState = PS_D;
+            break;
+        case PS_D:
+            tile->x = (shiftY * -1) + baseTile->x;
+            tile->y = shiftX + baseTile->y;
+            nextState = PS_A;
+            break;
+        }
+    }
+    piece->pieceState = nextState;
+}
+
+void rotatePieceClockwise(Piece *piece) {
+    if (piece->pieceType == Piece_O) {
+        // don't rotate O type
+        return;
+    }
+
+    Tile *baseTile = piece->tiles[0];
+    PieceState nextState = PS_A;
+    for (uint32_t i = 1; i < 4; i++) {
+        Tile *tile = piece->tiles[i];
+        int32_t shiftX = piece->tiles[i]->x - baseTile->x;
+        int32_t shiftY = piece->tiles[i]->y - baseTile->y;
+
+        switch (piece->pieceState) {
+        case PS_A:
+            tile->x = shiftY + baseTile->x;
+            tile->y = (shiftX * -1) + baseTile->y;
+            nextState = PS_D;
+            break;
+        case PS_B:
+            tile->x = shiftY + baseTile->x;
+            tile->y = (shiftX * -1) + baseTile->y;
+            nextState = PS_A;
+            break;
+        case PS_C:
+            tile->x = shiftY + baseTile->x;
+            tile->y = (shiftX * -1) + baseTile->y;
+            nextState = PS_B;
+            break;
+        case PS_D:
+            tile->x = shiftY + baseTile->x;
+            tile->y = (shiftX * -1) + baseTile->y;
+            nextState = PS_C;
+            break;
+        }
+    }
+    piece->pieceState = nextState;
 }

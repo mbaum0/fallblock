@@ -80,7 +80,7 @@ bool canMoveActivePiece(Game *game, int32_t dx) {
             return false;
         }
 
-        if (game->board.playField[newX][y] != NULL){
+        if (game->board.playField[newX][y] != NULL) {
             return false;
         }
     }
@@ -123,24 +123,24 @@ void doInputLogic(Game *game) {
             }
             game->keyboard.keys[SDL_SCANCODE_DOWN].pressed = false;
         }
-    }
-}
 
-/**
- * @brief Reset pressed keys to false
- * 
- * @param game game instance
- */
-void resetInputKeys(Game *game){
-    game->keyboard.keys[SDL_SCANCODE_RIGHT].pressed = false;
-    game->keyboard.keys[SDL_SCANCODE_LEFT].pressed = false;
-    game->keyboard.keys[SDL_SCANCODE_DOWN].pressed = false;
+        if (game->keyboard.keys[SDL_SCANCODE_UP].pressed ||
+            game->keyboard.keys[SDL_SCANCODE_X].pressed) {
+            rotatePieceClockwise(game->board.activePiece);
+            game->keyboard.keys[SDL_SCANCODE_UP].pressed = false;
+            game->keyboard.keys[SDL_SCANCODE_X].pressed = false;
+        }
+
+        if (game->keyboard.keys[SDL_SCANCODE_Z].pressed) {
+            rotatePieceCounterClockwise(game->board.activePiece);
+            game->keyboard.keys[SDL_SCANCODE_Z].pressed = false;
+        }
+    }
 }
 
 void doPieceLogic(Game *game) {
     // if piece doesn't exist, create one
     if (game->board.activePiece == NULL) {
-        resetInputKeys(game);
         createNextPiece(game);
     } else {
         if (canActivePieceDrop(game)) {
