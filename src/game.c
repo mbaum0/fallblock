@@ -2,6 +2,7 @@
 
 void createNextPiece(Game *game);
 bool shouldDropPiece(Game *game, uint32_t dropDelayMS);
+void updateDropDelay(Game *game);
 
 Game *createGame(void) {
     Game *newGame = calloc(1, sizeof(Game));
@@ -18,6 +19,8 @@ Game *createGame(void) {
     newGame->lastTick = SDL_GetPerformanceCounter();
     newGame->lastDrop = SDL_GetPerformanceCounter();
     newGame->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
+
+    updateDropDelay(newGame);
 
     return newGame;
 }
@@ -46,10 +49,10 @@ void destroyGame(Game *game) {
 }
 
 void createNextPiece(Game *game) {
-    PieceType type = getRandomPieceType();
     uint32_t spawnx = GAME_WIDTH / 2;
     uint32_t spawny = GAME_HEIGHT;
-    game->board.activePiece = createNewPiece(spawnx, spawny, type);
+    game->board.activePiece = createNewPiece(spawnx, spawny, game->board.nextPieceType);
+    game->board.nextPieceType = getRandomPieceType();;
 }
 
 bool doesTileExistAtCoordianate(Game *game, int32_t x, int32_t y) {
@@ -72,6 +75,12 @@ bool canActivePieceDrop(Game *game) {
         }
     }
     return true;
+}
+
+void hardDropActivePiece(Game* game){
+    while(canActivePieceDrop(game)){
+        movePiece(game->board.activePiece, 0, -1);
+    }
 }
 
 bool canMovePiece(Game *game, Piece *piece, int32_t dx, int32_t dy) {
@@ -132,9 +141,10 @@ void updateLevel(Game *game) {
 
 void updateDropDelay(Game *game) {
     uint32_t level = game->board.level;
-    float timeInSeconds = pow((0.8f * ((level - 1) * (0.007f))), level - 1);
+    float timeInSeconds = pow((0.8f - ((level - 1) * (0.007f))), level - 1);
     uint32_t timeInMS = (uint32_t)(timeInSeconds * 1000);
     game->board.dropDelayMS = timeInMS;
+    log_debug("New drop delay: %d", timeInMS);
 }
 
 void processCompletedRows(Game *game) {
@@ -161,8 +171,8 @@ void processCompletedRows(Game *game) {
 
     // if we completed some rows, update the level and drop delay
     if (numCompletedRows > 0) {
-        updateDropDelay(game);
         updateLevel(game);
+        updateDropDelay(game);
     }
 }
 
@@ -596,6 +606,11 @@ void doInputLogic(Game *game) {
             }
             game->keyboard.keys[SDL_SCANCODE_Z].pressed = false;
         }
+
+        if (game->keyboard.keys[SDL_SCANCODE_SPACE].pressed){
+            hardDropActivePiece(game);
+            game->keyboard.keys[SDL_SCANCODE_SPACE].pressed = false;
+        }
     }
 }
 
@@ -614,12 +629,11 @@ void doPieceLogic(Game *game) {
         createNextPiece(game);
     }
 
-    if (shouldDropPiece(game, 800)) {
+    if (shouldDropPiece(game, game->board.dropDelayMS)) {
         if (canActivePieceDrop(game)) {
             dropActivePiece(game);
         } else {
             if (timeHasOccurredSinceLastSuccessfulMove(game, 200)) {
-                log_debug("Locking piece on board");
                 lockActivePieceOnBoard(game);
             } else {
                 log_debug("Lock delay preventing piece from locking.");

@@ -6,7 +6,7 @@
 void clearScene(GameMedia *gameMedia);
 void presentScene(GameMedia *gameMedia);
 void drawBackground(GameMedia *gameMedia);
-void drawTile(Tile *tile, GameMedia *gameMedia);
+void drawTileOnBoard(Tile *tile, GameMedia *gameMedia);
 void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia);
 void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia);
 void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
@@ -43,7 +43,7 @@ void drawBackground(GameMedia *gameMedia) {
     SDL_RenderDrawRect(gameMedia->renderer, &rect);
 }
 
-void drawTile(Tile *tile, GameMedia *gameMedia) {
+void drawTileOnBoard(Tile *tile, GameMedia *gameMedia) {
     int32_t x = GB_X_TO_PX(tile->x);
     int32_t y = GB_Y_TO_PX(tile->y);
 
@@ -64,7 +64,7 @@ void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia) {
     if (gameBoard->activePiece != NULL) {
         for (uint32_t i = 0; i < 4; i++) {
             Tile *tile = gameBoard->activePiece->tiles[i];
-            drawTile(tile, gameMedia);
+            drawTileOnBoard(tile, gameMedia);
         }
     }
 }
@@ -74,7 +74,7 @@ void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia) {
         for (uint32_t y = 0; y < GAME_HEIGHT; y++) {
             Tile *tile = gameBoard->playField[x][y];
             if (tile != NULL) {
-                drawTile(tile, gameMedia);
+                drawTileOnBoard(tile, gameMedia);
             }
         }
     }
@@ -95,15 +95,34 @@ void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
 }
 
 void drawScore(GameBoard *gameBoard, GameMedia *gameMedia) {
-    snprintf(scoreString, 20, "Score: %d", gameBoard->score);
+    snprintf(scoreString, 100, "Score: %u", gameBoard->score);
     drawText(gameMedia, scoreString, 32, 32, gameMedia->fonts.gameFont,
              gameMedia->colors.white);
 }
 
 void drawLevel(GameBoard *gameBoard, GameMedia *gameMedia) {
-    snprintf(levelString, 20, "Level: %d", gameBoard->level);
+    snprintf(levelString, 100, "Level: %u", gameBoard->level);
     drawText(gameMedia, levelString, 32, 64, gameMedia->fonts.gameFont,
              gameMedia->colors.white);
+}
+
+void drawNextPiece(GameBoard *gameBoard, GameMedia *gameMedia){
+    Piece* nextPiece = createNewPiece(0, 0, gameBoard->nextPieceType);
+    for (uint32_t i = 0; i < 4; i++){
+        Tile *tile = nextPiece->tiles[i];
+        
+        SDL_Rect src;
+        src.x = tile->color * TILE_SIZE;
+        src.y = 0;
+        src.w = src.h = TILE_SIZE;
+
+        SDL_Rect dst;
+        dst.x = 64 + (tile->x*TILE_SIZE);
+        dst.y = 128 + (tile->y*TILE_SIZE);
+        dst.w = src.w;
+        dst.h = src.h;
+        SDL_RenderCopy(gameMedia->renderer, gameMedia->textures.tiles, &src, &dst);
+    }
 }
 
 void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard) {
@@ -114,5 +133,6 @@ void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard) {
     drawLevel(gameBoard, gameMedia);
     drawActivePiece(gameBoard, gameMedia);
     drawLockedTiles(gameBoard, gameMedia);
+    drawNextPiece(gameBoard, gameMedia);
     presentScene(gameMedia);
 }
