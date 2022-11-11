@@ -3,6 +3,8 @@
 void createNextPiece(Game *game);
 bool shouldDropPiece(Game *game, uint32_t dropDelayMS);
 void updateDropDelay(Game *game);
+bool canPieceDrop(Game *game, Piece *piece);
+void hardDropPiece(Game *game, Piece *piece);
 
 Game *createGame(void) {
     Game *newGame = calloc(1, sizeof(Game));
@@ -14,6 +16,7 @@ Game *createGame(void) {
     newGame->board.nextPieceType = getRandomPieceType();
     newGame->board.score = 0;
     newGame->board.level = 1;
+    newGame->board.ghostPiece = NULL;
 
     newGame->keyboard = (Keyboard){0};
     newGame->lastTick = SDL_GetPerformanceCounter();
@@ -40,6 +43,11 @@ void destroyGameBoard(GameBoard *gameBoard) {
         }
         free(gameBoard->activePiece);
     }
+
+    for (uint32_t i = 0; i < 4; i++) {
+        free(gameBoard->ghostPiece->tiles[i]);
+    }
+    free(gameBoard->ghostPiece);
 }
 
 void destroyGame(Game *game) {
@@ -51,8 +59,25 @@ void destroyGame(Game *game) {
 void createNextPiece(Game *game) {
     uint32_t spawnx = GAME_WIDTH / 2;
     uint32_t spawny = GAME_HEIGHT;
-    game->board.activePiece = createNewPiece(spawnx, spawny, game->board.nextPieceType);
-    game->board.nextPieceType = getRandomPieceType();;
+    game->board.activePiece =
+        createNewPiece(spawnx, spawny, game->board.nextPieceType);
+    game->board.nextPieceType = getRandomPieceType();
+
+    game->board.ghostPiece = createNewPiece(0, 0, game->board.nextPieceType);
+}
+
+void updateGhostPiece(Game *game) {
+    Piece *ghost = game->board.ghostPiece;
+    if (ghost != NULL) {
+        Piece *active = game->board.activePiece;
+        ghost->pieceState = active->pieceState;
+        ghost->pieceType = active->pieceType;
+        for (uint32_t i = 0; i < 4; i++) {
+            ghost->tiles[i]->x = active->tiles[i]->x;
+            ghost->tiles[i]->y = active->tiles[i]->y;
+        }
+        hardDropPiece(game, ghost);
+    }
 }
 
 bool doesTileExistAtCoordianate(Game *game, int32_t x, int32_t y) {
@@ -64,9 +89,9 @@ bool doesTileExistAtCoordianate(Game *game, int32_t x, int32_t y) {
     return (game->board.playField[x][y] != NULL);
 }
 
-bool canActivePieceDrop(Game *game) {
+bool canPieceDrop(Game *game, Piece *piece) {
     for (uint32_t i = 0; i < 4; i++) {
-        Tile *tile = game->board.activePiece->tiles[i];
+        Tile *tile = piece->tiles[i];
         int32_t newY = tile->y - 1;
         if (doesTileExistAtCoordianate(game, tile->x, newY)) {
             return false;
@@ -77,10 +102,18 @@ bool canActivePieceDrop(Game *game) {
     return true;
 }
 
-void hardDropActivePiece(Game* game){
-    while(canActivePieceDrop(game)){
-        movePiece(game->board.activePiece, 0, -1);
+bool canActivePieceDrop(Game *game) {
+    return canPieceDrop(game, game->board.activePiece);
+}
+
+void hardDropPiece(Game *game, Piece *piece) {
+    while (canPieceDrop(game, piece)) {
+        movePiece(piece, 0, -1);
     }
+}
+
+void hardDropActivePiece(Game *game) {
+    hardDropPiece(game, game->board.activePiece);
 }
 
 bool canMovePiece(Game *game, Piece *piece, int32_t dx, int32_t dy) {
@@ -182,7 +215,9 @@ void lockActivePieceOnBoard(Game *game) {
         game->board.playField[tile->x][tile->y] = tile;
     }
     free(game->board.activePiece);
+    free(game->board.ghostPiece);
     game->board.activePiece = NULL;
+    game->board.ghostPiece = NULL;
 }
 
 bool attemptKick(Game *game, Piece *piece, int32_t dx, int32_t dy) {
@@ -607,7 +642,7 @@ void doInputLogic(Game *game) {
             game->keyboard.keys[SDL_SCANCODE_Z].pressed = false;
         }
 
-        if (game->keyboard.keys[SDL_SCANCODE_SPACE].pressed){
+        if (game->keyboard.keys[SDL_SCANCODE_SPACE].pressed) {
             hardDropActivePiece(game);
             game->keyboard.keys[SDL_SCANCODE_SPACE].pressed = false;
         }
@@ -679,5 +714,6 @@ void runGame(Game *game) {
         }
         doInputLogic(game);
         processCompletedRows(game);
+        updateGhostPiece(game);
     };
 }

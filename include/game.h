@@ -18,6 +18,7 @@ typedef enum { GS_Menu, GS_Playing, GS_Paused, GS_Gameover } GameState;
 
 struct GameBoard {
     Piece *activePiece;
+    Piece *ghostPiece;
     PieceType nextPieceType;
     Tile *playField[GAME_WIDTH][GAME_HEIGHT];
     uint32_t score;
