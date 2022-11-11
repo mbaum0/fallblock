@@ -106,7 +106,39 @@ void dropTilesAboveRow(Game *game, uint32_t row) {
     }
 }
 
+uint32_t getCompletedRowScoreValue(uint32_t numCompletedRows) {
+    switch (numCompletedRows) {
+    case 0:
+        return 0;
+    case 1:
+        return 1;
+    case 2:
+        return 3;
+    case 3:
+        return 5;
+    case 4:
+        return 8;
+    default:
+        return 0;
+    }
+}
+
+void updateLevel(Game *game) {
+    // go to next level is score exceeds current level * 5
+    if (game->board.score >= game->board.level * 5) {
+        game->board.level += 1;
+    }
+}
+
+void updateDropDelay(Game *game) {
+    uint32_t level = game->board.level;
+    float timeInSeconds = pow((0.8f * ((level - 1) * (0.007f))), level - 1);
+    uint32_t timeInMS = (uint32_t)(timeInSeconds * 1000);
+    game->board.dropDelayMS = timeInMS;
+}
+
 void processCompletedRows(Game *game) {
+    uint32_t numCompletedRows = 0;
     // check if a row is completed
     for (uint32_t y = 0; y < GAME_HEIGHT; y++) {
         uint32_t rowSum = 0;
@@ -117,12 +149,20 @@ void processCompletedRows(Game *game) {
         }
         if (rowSum >= GAME_WIDTH) {
             // completed row :)
+            numCompletedRows += 1;
             for (uint32_t x = 0; x < GAME_WIDTH; x++) {
                 free(game->board.playField[x][y]);
                 game->board.playField[x][y] = NULL;
             }
             dropTilesAboveRow(game, y);
         }
+    }
+    game->board.score += getCompletedRowScoreValue(numCompletedRows);
+
+    // if we completed some rows, update the level and drop delay
+    if (numCompletedRows > 0) {
+        updateDropDelay(game);
+        updateLevel(game);
     }
 }
 

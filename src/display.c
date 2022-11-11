@@ -14,8 +14,8 @@ void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
 void drawScore(GameBoard *gameBoard, GameMedia *gameMedia);
 void drawLevel(GameBoard *gameBoard, GameMedia *gameMedia);
 
-char scoreString[20];
-char levelString[20];
+char scoreString[100];
+char levelString[100];
 
 void clearScene(GameMedia *gameMedia) {
     SDL_RenderClear(gameMedia->renderer);

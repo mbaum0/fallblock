@@ -23,6 +23,7 @@ struct GameBoard {
     uint32_t score;
     uint32_t level;
     uint64_t lastSuccessfulMove;
+    uint32_t dropDelayMS;
 };
 
 struct Game {
