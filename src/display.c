@@ -147,6 +147,10 @@ void drawNextPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
         SDL_RenderCopy(gameMedia->renderer, gameMedia->textures.tiles, &src,
                        &dst);
     }
+    for (uint32_t i = 0; i < 4; i++) {
+        free(nextPiece->tiles[i]);
+    }
+    free(nextPiece);
 }
 
 void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard) {

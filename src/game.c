@@ -44,10 +44,13 @@ void destroyGameBoard(GameBoard *gameBoard) {
         free(gameBoard->activePiece);
     }
 
-    for (uint32_t i = 0; i < 4; i++) {
-        free(gameBoard->ghostPiece->tiles[i]);
+
+    if (gameBoard->ghostPiece != NULL){
+        for (uint32_t i = 0; i < 4; i++) {
+            free(gameBoard->ghostPiece->tiles[i]);
+        }
+        free(gameBoard->ghostPiece);
     }
-    free(gameBoard->ghostPiece);
 }
 
 void destroyGame(Game *game) {
@@ -215,6 +218,11 @@ void lockActivePieceOnBoard(Game *game) {
         game->board.playField[tile->x][tile->y] = tile;
     }
     free(game->board.activePiece);
+
+    for (uint32_t i = 0; i < 4; i++){
+        free(game->board.ghostPiece->tiles[i]);
+    }
+
     free(game->board.ghostPiece);
     game->board.activePiece = NULL;
     game->board.ghostPiece = NULL;
@@ -226,6 +234,17 @@ bool attemptKick(Game *game, Piece *piece, int32_t dx, int32_t dy) {
         return true;
     }
     return false;
+}
+
+bool isActivePieceValid(Game *game) {
+    Piece *activePiece = game->board.activePiece;
+    for (uint32_t i = 0; i < 4; i++) {
+        Tile *tile = activePiece->tiles[i];
+        if (tile->y >= GAME_HEIGHT) {
+            return false;
+        }
+    }
+    return true;
 }
 
 bool attemptKick_I(Game *game, Piece *piece, bool clockwise) {
@@ -658,6 +677,7 @@ bool timeHasOccurredSinceLastSuccessfulMove(Game *game, uint32_t time_ms) {
     return (elapsedMS >= time_ms);
 }
 
+// return false if the player is a loser
 void doPieceLogic(Game *game) {
     // if piece doesn't exist, create one
     if (game->board.activePiece == NULL) {
@@ -715,5 +735,10 @@ void runGame(Game *game) {
         doInputLogic(game);
         processCompletedRows(game);
         updateGhostPiece(game);
+        if (game->board.activePiece != NULL && !canActivePieceDrop(game) &&
+            !isActivePieceValid(game)) {
+            log_info("You suck! game over!");
+            return;
+        }
     };
 }
