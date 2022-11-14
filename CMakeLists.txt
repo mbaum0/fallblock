@@ -16,7 +16,7 @@ target_include_directories(${PROJECT_NAME} PRIVATE include)
 
 # Add compiler errors/warnings flags
 target_compile_options(${PROJECT_NAME} PRIVATE $<$<C_COMPILER_ID:MSVC>:/W4 /WX>)
-target_compile_options(${PROJECT_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror -std=c11 -o0 -g -gdwarf-4>)
+target_compile_options(${PROJECT_NAME} PRIVATE $<$<NOT:$<C_COMPILER_ID:MSVC>>:-Wall -Wextra -pedantic -Werror -std=c11 -O0 -g -gdwarf-4>)
 
 # Add SDL2 library
 find_package(SDL2 REQUIRED)
@@ -29,6 +29,9 @@ target_link_libraries(${PROJECT_NAME} SDL2::Image)
 # Add SDL2_ttf library
 find_package(SDL2_ttf REQUIRED)
 target_link_libraries(${PROJECT_NAME} SDL2::TTF)
+
+# Add math
+target_link_libraries(${PROJECT_NAME} m)
 
 # Copy over assets to the build directory
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
