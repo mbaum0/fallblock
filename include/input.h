@@ -1,6 +1,6 @@
 #pragma once
 #include "log.h"
-#include <SDL2/SDL.h>
+#include <SDL.h>
 #include <stdbool.h>
 
 #define MAX_KEYBOARD_KEYS 350
