@@ -1,1 +1,0 @@
-x86_64-w64-mingw32-gcc src/main.c src/display.c src/game.c src/input.c src/log.c src/media.c src/piece.c -o fallblock.exe -Iinclude/ -I/usr/x86_64-w64-mingw32/include -lmingw32 -lSDL2main -lSDL2 -lSDL2_ttf -lSDL2_image -I/usr/x86_64-w64-mingw32/include/SDL2 -D_SDL_main_h
