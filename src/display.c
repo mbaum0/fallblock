@@ -25,7 +25,7 @@ void blitTile(Game *game, Tile *tile, bool doOffset) {
     if (doOffset) {
         x += GAMEBOARD_WIDTH_OFFSET;
         y += GAMEBOARD_HEIGHT_OFFSET;
-    } 
+    }
     SDL_Rect src;
     src.x = tile->color * BLOCK_SIZE;
     src.y = 0;
@@ -56,8 +56,8 @@ void drawTiles(Game *game) {
             SDL_Rect rect;
             rect.h = BLOCK_SIZE;
             rect.w = BLOCK_SIZE;
-            rect.x = (t->x*BLOCK_SIZE) + GAMEBOARD_WIDTH_OFFSET;
-            rect.y = (t->y*BLOCK_SIZE) + GAMEBOARD_HEIGHT_OFFSET;
+            rect.x = (t->x * BLOCK_SIZE) + GAMEBOARD_WIDTH_OFFSET;
+            rect.y = (t->y * BLOCK_SIZE) + GAMEBOARD_HEIGHT_OFFSET;
             SDL_SetRenderDrawColor(game->renderer, 245, 245, 66, 100);
             SDL_RenderDrawRect(game->renderer, &rect);
         }
@@ -108,8 +108,8 @@ void drawLevel(Game *game) {
 
 void drawNextPiece(Game *game) {
     if (game->stage->currentPiece != NULL) {
-        Piece* piece = createNewPiece(2, 5, game->stage->nextPieceType);
-        for (uint32_t i = 0; i < 4; i++){
+        Piece *piece = createNewPiece(2, 5, game->stage->nextPieceType);
+        for (uint32_t i = 0; i < 4; i++) {
             blitTile(game, piece->tiles[i], false);
         }
         destroyPiece(piece);

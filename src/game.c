@@ -276,7 +276,7 @@ static bool tryToMakePieceValid(Game *game, Piece *piece) {
         }
         printf("Failed to make valid piece:( \n");
         for (uint32_t i = 0; i < 4; i++) {
-            piece->tiles[i]->x -= 2*adjust;
+            piece->tiles[i]->x -= 2 * adjust;
         }
         return false;
     }
