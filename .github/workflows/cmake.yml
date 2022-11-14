@@ -30,8 +30,14 @@ jobs:
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+      run: |
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}}
+        mkdir release
+        cp build/fallblock release/
+        cp -r build/assets release/
+        tar -cvf fallblock.tar release/
+        rm -r release
       
     - uses: actions/upload-artifact@v3.1.1
       with:
-        path: ${{github.workspace}}/build/fallblock
+        path: ${{github.workspace}}/fallblock.tar
