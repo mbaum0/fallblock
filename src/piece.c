@@ -114,7 +114,7 @@ Piece *createNewPiece(int32_t x, int32_t y, PieceType type) {
 }
 
 void destroyPiece(Piece *piece) {
-    for (uint32_t i = 0; i < 4; i++){
+    for (uint32_t i = 0; i < 4; i++) {
         free(piece->tiles[i]);
     }
     free(piece);
