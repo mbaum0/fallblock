@@ -1,140 +1,167 @@
 #include "display.h"
 
-void clearScene(Game *game);
-void presentScene(Game *game);
-void drawTiles(Game *game);
-void blitTile(Game *game, Tile *tile, bool doOffset);
-void drawBackdrop(Game *game);
-void drawScore(Game *game);
+#define GB_X_TO_PX(x) (x * TILE_SIZE) + TILE_SIZE * 7
+#define GB_Y_TO_PX(y) (TILE_SIZE * GAME_HEIGHT) - (y * TILE_SIZE)
 
-static SDL_Color whiteColor = {255, 255, 255, 255};
-char scoreString[20];
-char levelString[20];
+void clearScene(GameMedia *gameMedia);
+void presentScene(GameMedia *gameMedia);
+void drawBackground(GameMedia *gameMedia);
+void drawTileOnBoard(Tile *tile, GameMedia *gameMedia);
+void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia);
+void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia);
+void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
+              TTF_Font *font, SDL_Color color);
+void drawScore(GameBoard *gameBoard, GameMedia *gameMedia);
+void drawLevel(GameBoard *gameBoard, GameMedia *gameMedia);
 
-void clearScene(Game *game) {
-    SDL_RenderClear(game->renderer);
+char scoreString[100];
+char levelString[100];
+
+void clearScene(GameMedia *gameMedia) {
+    SDL_SetRenderDrawColor(gameMedia->renderer, 255, 0, 0, 255);
+    SDL_RenderClear(gameMedia->renderer);
 }
 
-void presentScene(Game *game) {
-    SDL_RenderPresent(game->renderer);
+void presentScene(GameMedia *gameMedia) {
+    SDL_RenderPresent(gameMedia->renderer);
 }
 
-void blitTile(Game *game, Tile *tile, bool doOffset) {
-    uint32_t x = GB_TO_PX(tile->x);
-    uint32_t y = GB_TO_PX(tile->y);
-    if (doOffset) {
-        x += GAMEBOARD_WIDTH_OFFSET;
-        y += GAMEBOARD_HEIGHT_OFFSET;
-    }
+void drawBackground(GameMedia *gameMedia) {
+    SDL_Rect rect;
+
+    rect.w = WINDOW_WIDTH;
+    rect.h = WINDOW_HEIGHT;
+    rect.x = 0;
+    rect.y = 0;
+    SDL_SetRenderDrawColor(gameMedia->renderer, 201, 197, 183, 255);
+    SDL_RenderFillRect(gameMedia->renderer, &rect);
+
+    rect.w = TILE_SIZE * GAME_WIDTH;
+    rect.h = TILE_SIZE * GAME_HEIGHT;
+    rect.x = TILE_SIZE * 7;
+    rect.y = TILE_SIZE * 1;
+    SDL_SetRenderDrawColor(gameMedia->renderer, 10, 79, 73, 255);
+    SDL_RenderFillRect(gameMedia->renderer, &rect);
+}
+
+void drawTileOnBoard(Tile *tile, GameMedia *gameMedia) {
+    int32_t x = GB_X_TO_PX(tile->x);
+    int32_t y = GB_Y_TO_PX(tile->y);
+
     SDL_Rect src;
-    src.x = tile->color * BLOCK_SIZE;
+    src.x = tile->color * TILE_SIZE;
     src.y = 0;
-    src.w = src.h = BLOCK_SIZE;
+    src.w = src.h = TILE_SIZE;
 
     SDL_Rect dst;
     dst.x = x;
     dst.y = y;
     dst.w = src.w;
     dst.h = src.h;
-    SDL_RenderCopy(game->renderer, game->stage->tileTexture, &src, &dst);
+    SDL_RenderCopy(gameMedia->renderer, gameMedia->textures.tiles, &src, &dst);
 }
 
-void drawTiles(Game *game) {
-    Tile *t;
-    for (uint32_t i = 0; i < GAME_WIDTH; i++) {
-        for (uint32_t j = 0; j < GAME_HEIGHT; j++) {
-            if ((t = game->stage->board[i][j])) {
-                blitTile(game, t, true);
+void drawGhostTileOnBoard(Tile *tile, GameMedia *gameMedia) {
+    int32_t x = GB_X_TO_PX(tile->x);
+    int32_t y = GB_Y_TO_PX(tile->y);
+
+    SDL_Rect rect;
+    rect.w = TILE_SIZE;
+    rect.h = TILE_SIZE;
+    rect.x = x;
+    rect.y = y;
+    SDL_SetRenderDrawColor(gameMedia->renderer, 255, 255, 255, 200);
+    SDL_RenderDrawRect(gameMedia->renderer, &rect);
+}
+
+void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia) {
+    if (gameBoard->activePiece != NULL) {
+        for (uint32_t i = 0; i < 4; i++) {
+            Tile *tile = gameBoard->activePiece->tiles[i];
+            drawTileOnBoard(tile, gameMedia);
+        }
+    }
+}
+
+void drawGhostPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
+    if (gameBoard->ghostPiece != NULL) {
+        for (uint32_t i = 0; i < 4; i++) {
+            Tile *tile = gameBoard->ghostPiece->tiles[i];
+            drawGhostTileOnBoard(tile, gameMedia);
+        }
+    }
+}
+
+void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia) {
+    for (uint32_t x = 0; x < GAME_WIDTH; x++) {
+        for (uint32_t y = 0; y < GAME_HEIGHT; y++) {
+            Tile *tile = gameBoard->playField[x][y];
+            if (tile != NULL) {
+                drawTileOnBoard(tile, gameMedia);
             }
         }
     }
+}
 
-    if (game->stage->currentPiece != NULL) {
-        for (uint32_t i = 0; i < 4; i++) {
-            Tile *t = game->stage->currentPiece->tiles[i];
-            blitTile(game, t, true);
-            SDL_Rect rect;
-            rect.h = BLOCK_SIZE;
-            rect.w = BLOCK_SIZE;
-            rect.x = (t->x * BLOCK_SIZE) + GAMEBOARD_WIDTH_OFFSET;
-            rect.y = (t->y * BLOCK_SIZE) + GAMEBOARD_HEIGHT_OFFSET;
-            SDL_SetRenderDrawColor(game->renderer, 245, 245, 66, 100);
-            SDL_RenderDrawRect(game->renderer, &rect);
-        }
+void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
+              TTF_Font *font, SDL_Color color) {
+    SDL_Surface *textSurface = TTF_RenderText_Blended(font, str, color);
+    SDL_Texture *textTexture =
+        SDL_CreateTextureFromSurface(gameMedia->renderer, textSurface);
+    SDL_Rect textRect;
+    textRect.x = x;
+    textRect.y = y;
+    textRect.w = textSurface->w;
+    textRect.h = textSurface->h;
+    SDL_RenderCopy(gameMedia->renderer, textTexture, NULL, &textRect);
+    SDL_FreeSurface(textSurface);
+}
+
+void drawScore(GameBoard *gameBoard, GameMedia *gameMedia) {
+    snprintf(scoreString, 100, "Score: %u", gameBoard->score);
+    drawText(gameMedia, scoreString, 32, 32, gameMedia->fonts.gameFont,
+             gameMedia->colors.white);
+}
+
+void drawLevel(GameBoard *gameBoard, GameMedia *gameMedia) {
+    snprintf(levelString, 100, "Level: %u", gameBoard->level);
+    drawText(gameMedia, levelString, 32, 64, gameMedia->fonts.gameFont,
+             gameMedia->colors.white);
+}
+
+void drawNextPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
+    Piece *nextPiece = createNewPiece(0, 0, gameBoard->nextPieceType);
+    for (uint32_t i = 0; i < 4; i++) {
+        Tile *tile = nextPiece->tiles[i];
+
+        SDL_Rect src;
+        src.x = tile->color * TILE_SIZE;
+        src.y = 0;
+        src.w = src.h = TILE_SIZE;
+
+        SDL_Rect dst;
+        dst.x = 64 + (tile->x * TILE_SIZE);
+        dst.y = 128 + (tile->y * TILE_SIZE);
+        dst.w = src.w;
+        dst.h = src.h;
+        SDL_RenderCopy(gameMedia->renderer, gameMedia->textures.tiles, &src,
+                       &dst);
     }
-}
-
-void drawBackdrop(Game *game) {
-    SDL_Rect dst;
-    dst.x = 0;
-    dst.y = 0;
-    SDL_QueryTexture(game->stage->backdropTexture, NULL, NULL, &dst.w, &dst.h);
-    SDL_RenderCopy(game->renderer, game->stage->backdropTexture, NULL, &dst);
-}
-
-void drawScore(Game *game) {
-    snprintf(scoreString, 20, "Score: %d", game->stage->score);
-    SDL_Surface *scoreSurface =
-        TTF_RenderText_Blended(game->stage->gameFont, scoreString, whiteColor);
-    SDL_Texture *scoreTexture =
-        SDL_CreateTextureFromSurface(game->renderer, scoreSurface);
-    SDL_Rect scoreRect;
-    scoreRect.x = 45;
-    scoreRect.y = 45;
-    scoreRect.w = scoreSurface->w;
-    scoreRect.h = scoreSurface->h;
-    SDL_RenderCopy(game->renderer, scoreTexture, NULL, &scoreRect);
-
-    SDL_FreeSurface(scoreSurface);
-    SDL_DestroyTexture(scoreTexture);
-}
-
-void drawLevel(Game *game) {
-    snprintf(levelString, 20, "Level: %d", game->stage->level);
-    SDL_Surface *levelSurface =
-        TTF_RenderText_Blended(game->stage->gameFont, levelString, whiteColor);
-    SDL_Texture *levelTexture =
-        SDL_CreateTextureFromSurface(game->renderer, levelSurface);
-    SDL_Rect levelRect;
-    levelRect.x = 45;
-    levelRect.y = 90;
-    levelRect.w = levelSurface->w;
-    levelRect.h = levelSurface->h;
-    SDL_RenderCopy(game->renderer, levelTexture, NULL, &levelRect);
-
-    SDL_FreeSurface(levelSurface);
-    SDL_DestroyTexture(levelTexture);
-}
-
-void drawNextPiece(Game *game) {
-    if (game->stage->currentPiece != NULL) {
-        Piece *piece = createNewPiece(2, 5, game->stage->nextPieceType);
-        for (uint32_t i = 0; i < 4; i++) {
-            blitTile(game, piece->tiles[i], false);
-        }
-        destroyPiece(piece);
+    for (uint32_t i = 0; i < 4; i++) {
+        free(nextPiece->tiles[i]);
     }
+    free(nextPiece);
 }
 
-void drawMenu(Game *game) {
-    SDL_Rect dst;
-    dst.x = 0;
-    dst.y = 0;
-    SDL_QueryTexture(game->stage->menuTexture, NULL, NULL, &dst.w, &dst.h);
-    SDL_RenderCopy(game->renderer, game->stage->menuTexture, NULL, &dst);
-}
-
-void updateDisplay(Game *game) {
-    clearScene(game);
-    if (game->menu) {
-        drawMenu(game);
-    } else {
-        drawBackdrop(game);
-        drawScore(game);
-        drawLevel(game);
-        drawTiles(game);
-        drawNextPiece(game);
-    }
-
-    presentScene(game);
+void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard) {
+    (void)gameBoard;
+    clearScene(gameMedia);
+    drawBackground(gameMedia);
+    drawScore(gameBoard, gameMedia);
+    drawLevel(gameBoard, gameMedia);
+    drawActivePiece(gameBoard, gameMedia);
+    drawGhostPiece(gameBoard, gameMedia);
+    drawLockedTiles(gameBoard, gameMedia);
+    drawNextPiece(gameBoard, gameMedia);
+    presentScene(gameMedia);
 }

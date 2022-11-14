@@ -1,14 +1,12 @@
 #include "game.h"
-#include <math.h>
-#include <stdlib.h>
+#include "log.h"
+#include <stdint.h>
 
-Game game = {0};
-
-int main(void) {
+int main(int argc, char** argv) {
+    (void)argc;
+    (void)argv;
     srand(time(0));
-    initGame(&game);
-    printf("Starting game!\n");
-    runGame(&game);
-    destroyGame(&game);
-    return 0;
+    Game *theGame = createGame();
+    runGame(theGame);
+    destroyGame(theGame);
 }

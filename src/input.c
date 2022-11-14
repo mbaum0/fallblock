@@ -1,34 +1,37 @@
 #include "input.h"
 
-static void doKeyUp(Game *game, SDL_KeyboardEvent *event) {
-    if (event->repeat == 0 && event->keysym.scancode < MAX_KEYBOARD_KEYS) {
-        game->keyboard[event->keysym.scancode] = 0;
+void doKeyUp(Keyboard *keyboard, SDL_KeyboardEvent *event) {
+    SDL_Scancode keyCode = event->keysym.scancode;
+    if (event->repeat == 0 && keyCode < MAX_KEYBOARD_KEYS) {
+        keyboard->keys[keyCode] = (InputKey){keyCode, false, false};
     }
 }
 
-static void doKeyDown(Game *game, SDL_KeyboardEvent *event) {
-    if (event->repeat == 0 && event->keysym.scancode < MAX_KEYBOARD_KEYS) {
-        game->keyboard[event->keysym.scancode] = 1;
+void doKeyDown(Keyboard *keyboard, SDL_KeyboardEvent *event) {
+    SDL_Scancode keyCode = event->keysym.scancode;
+    if (keyCode < MAX_KEYBOARD_KEYS) {
+        keyboard->keys[keyCode] =
+            (InputKey){keyCode, true, (event->repeat != 0)};
     }
 }
 
-bool processInput(Game *game) {
+bool processInput(Keyboard *keyboard) {
     SDL_Event event;
 
     while (SDL_PollEvent(&event)) {
         switch (event.type) {
         case SDL_QUIT:
-            return false;
-            break;
+            log_debug("Received SDL_QUIT event");
+            return true;
         case SDL_KEYDOWN:
-            doKeyDown(game, &event.key);
+            doKeyDown(keyboard, &event.key);
             break;
         case SDL_KEYUP:
-            doKeyUp(game, &event.key);
+            doKeyUp(keyboard, &event.key);
             break;
         default:
             break;
         }
     }
-    return true;
+    return false;
 }

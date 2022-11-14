@@ -48,7 +48,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -225,7 +225,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -418,7 +418,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -630,7 +630,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -644,7 +644,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -662,7 +662,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
 }
 {
    <insert_a_suppression_name_here>
@@ -1144,7 +1144,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -1956,7 +1956,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -2186,7 +2186,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
 }
 {
    <insert_a_suppression_name_here>
@@ -2271,7 +2271,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
 }
 {
    <insert_a_suppression_name_here>
@@ -2323,7 +2323,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -3698,7 +3698,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -3884,7 +3884,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -4108,7 +4108,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -4126,7 +4126,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
 }
 {
    <insert_a_suppression_name_here>
@@ -4348,7 +4348,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
    fun:main
 }
 {
@@ -4688,7 +4688,7 @@
    obj:/usr/lib/x86_64-linux-gnu/libSDL2-2.0.so.0.18.2
    fun:initSDL
    fun:initMedia
-   fun:initGame
+   fun:createGame
 }
 {
    <insert_a_suppression_name_here>
