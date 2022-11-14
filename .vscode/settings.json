@@ -13,5 +13,6 @@
             "binaryPath": "/home/dev/Desktop/fallblock/build/fallblock",
             "binaryArgs": []
         }
-    ]
+    ],
+    "cmake.configureOnOpen": false
 }
