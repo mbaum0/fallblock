@@ -568,9 +568,13 @@ bool attemptActivePieceRotation(Game *game, bool clockwise) {
         // attempt kicks
         switch (game->board.activePiece->pieceType) {
         case Piece_J:
+            // fall through
         case Piece_L:
+            // fall through
         case Piece_T:
+            // fall through
         case Piece_S:
+            // fall through
         case Piece_Z:
             if (!attemptKick_JLTSZ(game, activePiece, clockwise)) {
                 // all kicks failed, revert
@@ -584,6 +588,7 @@ bool attemptActivePieceRotation(Game *game, bool clockwise) {
                 rotatePieceCounterClockwise(activePiece);
                 return false;
             }
+            break;
         case Piece_O:
             return false;
         }
@@ -596,9 +601,13 @@ bool attemptActivePieceRotation(Game *game, bool clockwise) {
         // attempt kicks
         switch (game->board.activePiece->pieceType) {
         case Piece_J:
+            // fall through
         case Piece_L:
+            //  fall through
         case Piece_T:
+            // fall through
         case Piece_S:
+            // fall through
         case Piece_Z:
             if (!attemptKick_JLTSZ(game, activePiece, clockwise)) {
                 // all kicks failed, revert
@@ -612,6 +621,7 @@ bool attemptActivePieceRotation(Game *game, bool clockwise) {
                 rotatePieceClockwise(activePiece);
                 return false;
             }
+            break;
         case Piece_O:
             return false;
         }

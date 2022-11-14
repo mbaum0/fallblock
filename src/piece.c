@@ -36,6 +36,8 @@ TileColor getColorForType(PieceType type) {
         return TC_Pink;
     case Piece_Z:
         return TC_Red;
+    default:
+        return TC_Red;
     }
 }
 
