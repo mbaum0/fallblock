@@ -21,16 +21,17 @@ void updateLevel(GameBoard *board);
 void updateDropDelay(GameBoard *board);
 
 GameBoard *createGameBoard(void) {
-    GameBoard *newGame = calloc(1, sizeof(GameBoard));
-    newGame->activePiece = NULL;
-    newGame->ghostPiece = NULL;
-    newGame->nextPieceType = getRandomPieceType();
-    newGame->score = 0;
-    newGame->level = 1;
-    newGame->lastSuccessfulMoveTS = SDL_GetPerformanceCounter();
-    newGame->lastDropTS = SDL_GetPerformanceCounter();
+    GameBoard *newBoard = calloc(1, sizeof(GameBoard));
+    newBoard->activePiece = NULL;
+    newBoard->ghostPiece = NULL;
+    newBoard->nextPieceType = getRandomPieceType();
+    newBoard->score = 0;
+    newBoard->level = 1;
+    newBoard->lastSuccessfulMoveTS = SDL_GetPerformanceCounter();
+    newBoard->lastDropTS = SDL_GetPerformanceCounter();
+    updateDropDelay(newBoard);
 
-    return newGame;
+    return newBoard;
 }
 
 void destroyGameBoard(GameBoard *board) {

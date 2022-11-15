@@ -27,7 +27,7 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "Launch",
+            "name": "(lldb) Launch",
             "program": "${workspaceFolder}/build/fallblock",
             "args": [],
             "cwd": "${workspaceFolder}",

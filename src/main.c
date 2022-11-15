@@ -4,6 +4,7 @@
 #include "media.h"
 #include <stdint.h>
 #include <unistd.h>
+#include "input.h"
 
 int main(int argc, char **argv) {
     (void)argc;
@@ -22,12 +23,12 @@ int main(int argc, char **argv) {
 
     srand(time(0));
     GameMedia *media = createGameMedia();
-
     GameBoard *board = createGameBoard();
+    Keyboard keyboard;
 
-    while (true) {
+    while (!processInput(&keyboard)) {
         stepGameBoard(board);
         updateDisplay(media, board);
-        sleep(100);
+        SDL_Delay(100);
     }
 }
