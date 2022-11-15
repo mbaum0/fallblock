@@ -158,15 +158,14 @@ void drawNextPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
     free(nextPiece);
 }
 
-void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard) {
-    (void)gameBoard;
-    clearScene(gameMedia);
-    drawBackground(gameMedia);
-    drawScore(gameBoard, gameMedia);
-    drawLevel(gameBoard, gameMedia);
-    drawActivePiece(gameBoard, gameMedia);
-    drawGhostPiece(gameBoard, gameMedia);
-    drawLockedTiles(gameBoard, gameMedia);
-    drawNextPiece(gameBoard, gameMedia);
-    presentScene(gameMedia);
+void updateDisplay(Game* game) {
+    clearScene(&game->media);
+    drawBackground(&game->media);
+    drawScore(&game->boardOne, &game->media);
+    drawLevel(&game->boardOne, &game->media);
+    drawActivePiece(&game->boardOne, &game->media);
+    drawGhostPiece(&game->boardOne, &game->media);
+    drawLockedTiles(&game->boardOne, &game->media);
+    drawNextPiece(&game->boardOne, &game->media);
+    presentScene(&game->media);
 }

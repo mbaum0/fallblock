@@ -30,7 +30,8 @@ struct GameBoard {
 
 struct Game {
     GameMedia media;
-    GameBoard board;
+    GameBoard boardOne;
+    GameBoard boardTwo;
     Keyboard keyboard;
     uint64_t lastTick;
     uint64_t lastDrop;
