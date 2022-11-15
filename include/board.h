@@ -9,6 +9,7 @@ typedef struct GameBoard GameBoard;
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
+#include "kick.h"
 
 #define GAME_WIDTH 10
 #define GAME_HEIGHT 20
@@ -35,7 +36,7 @@ typedef enum {
     IE_SOFT_DROP,
     IE_MOVE_RIGHT,
     IE_MOVE_LEFT
-} InputEvent;
+} CommandEvent;
 
 /**
  * @brief Create a GameBoard object
@@ -62,9 +63,9 @@ void destroyGameBoard(GameBoard *board);
 bool stepGameBoard(GameBoard *board);
 
 /**
- * @brief Send a key event to update the gameboard
+ * @brief Send a command event to update the gameboard
  *
  * @param board
- * @param key
+ * @param cmd
  */
-void processKeyEvent(GameBoard *board, InputEvent key);
+void processCommandEvent(GameBoard *board, CommandEvent cmd);

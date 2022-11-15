@@ -9,6 +9,8 @@ void spawnNextPiece(GameBoard *board);
 bool shouldActivePieceDrop(GameBoard *board);
 bool canActivePieceDrop(GameBoard *board);
 bool canPieceDrop(GameBoard *board, Piece *piece);
+bool canPieceMove(GameBoard *board, Piece *piece, int32_t dx, int32_t dy);
+bool canActivePieceMove(GameBoard *board, int32_t dx, int32_t dy);
 bool doesTileExistAtCoordianate(GameBoard *board, uint32_t x, uint32_t y);
 void dropActivePiece(GameBoard *board);
 bool shouldActivePieceLock(GameBoard *board);
@@ -19,6 +21,10 @@ void dropTilesAboveRow(GameBoard *board, uint32_t row);
 void updateScore(GameBoard *board, uint32_t numRows);
 void updateLevel(GameBoard *board);
 void updateDropDelay(GameBoard *board);
+void attemptClockwiseRotation(GameBoard *board);
+void attemptCounterClockwiseRotation(GameBoard *board);
+void attemptMoveLeft(GameBoard *board);
+void attemptMoveRight(GameBoard *board);
 
 GameBoard *createGameBoard(void) {
     GameBoard *newBoard = calloc(1, sizeof(GameBoard));
@@ -68,6 +74,28 @@ bool canPieceDrop(GameBoard *board, Piece *piece) {
 
 bool canActivePieceDrop(GameBoard *board) {
     return canPieceDrop(board, board->activePiece);
+}
+
+bool canPieceMove(GameBoard *board, Piece *piece, int32_t dx, int32_t dy){
+    for (uint32_t i = 0; i < 4; i ++){
+        int32_t newX = piece->tiles[i]->x + dx;
+        int32_t newY = piece->tiles[i]->y + dy;
+        if (newX < 0 || newX >= GAME_WIDTH || newY < 0){
+            return false;
+        }
+
+        // check for collisions
+        if (newY >=0 && newX >=0){
+            if (board->playField[newX][newY] != NULL){
+                return false;
+            }
+        }
+    }
+    return true;
+}
+
+bool canActivePieceMove(GameBoard *board, int32_t dx, int32_t dy){
+    return canPieceMove(board, board->activePiece, dx, dy);
 }
 
 uint32_t getElapsedTimeMS(uint64_t lastTick) {
@@ -235,6 +263,48 @@ void processCompletedRows(GameBoard *board) {
     if (numCompletedRows > 0) {
         updateLevel(board);
         updateDropDelay(board);
+    }
+}
+
+void attemptClockwiseRotation(GameBoard *board){
+    Piece* active = board->activePiece;
+    rotatePieceClockwise(active);
+    if (canActivePieceMove(board, 0, 0)){
+        // piece is valid
+        return;
+    }
+
+    int32_t *dx, *dy;
+    getKickOffsets(active->pieceType, active->pieceState, KT_A, true, dx, dy);
+    if (canActivePieceMove(board, *dx, *dy)){
+        movePiece(active, *dx, *dy);
+    }
+    
+}
+void attemptCounterClockwiseRotation(GameBoard *board);
+void attemptMoveLeft(GameBoard *board);
+void attemptMoveRight(GameBoard *board);
+
+void processCommandEvent(GameBoard *board, CommandEvent cmd) {
+    switch (cmd) {
+    case IE_ROTATE_CLOCKWISE:
+        attemptClockwiseRotation(board);
+        break;
+    case IE_ROTATE_COUNTER_CLOCKWISE:
+        attemptCounterClockwiseRotation(board);
+        break;
+    case IE_HARD_DROP:
+        break;
+    case IE_SOFT_DROP:
+        break;
+    case IE_MOVE_RIGHT:
+        attemptMoveRight(board);
+        break;
+    case IE_MOVE_LEFT:
+        attemptMoveLeft(board);
+        break;
+    default:
+        break;
     }
 }
 

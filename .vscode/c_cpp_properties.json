@@ -19,7 +19,8 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include/*",
-                "/opt/homebrew/include/SDL2/"
+                "/opt/homebrew/include/SDL2/",
+                "${workspaceFolder}/include"
             ],
             "configurationProvider": "ms-vscode.cmake-tools"
         }

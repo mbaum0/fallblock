@@ -6,7 +6,8 @@
         "display.h": "c",
         "input.h": "c",
         "logging.h": "c",
-        "ratio": "c"
+        "kick.h": "c",
+        "stdbool.h": "c"
     },
     "makefile.launchConfigurations": [
         {

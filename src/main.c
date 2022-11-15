@@ -1,10 +1,10 @@
 #include "board.h"
 #include "display.h"
+#include "input.h"
 #include "log.h"
 #include "media.h"
 #include <stdint.h>
 #include <unistd.h>
-#include "input.h"
 
 int main(int argc, char **argv) {
     (void)argc;
