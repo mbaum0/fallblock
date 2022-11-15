@@ -127,8 +127,12 @@ bool canMovePiece(Game *game, Piece *piece, int32_t dx, int32_t dy) {
             return false;
         }
 
-        if (game->board.playField[newX][newY] != NULL) {
-            return false;
+        // we only need to check for collisions if the tile is
+        // on the board (not still above it)
+        if (newY >= 0 && newX >= 0){
+            if (game->board.playField[newX][newY] != NULL) {
+                return false;
+            }
         }
     }
     return true;
@@ -651,6 +655,7 @@ void doInputLogic(Game *game) {
         if (game->keyboard.keys[SDL_SCANCODE_DOWN].pressed) {
             if (canActivePieceDrop(game)) {
                 movePiece(game->board.activePiece, 0, -1);
+                game->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
             }
             game->keyboard.keys[SDL_SCANCODE_DOWN].pressed = false;
         }
@@ -674,6 +679,7 @@ void doInputLogic(Game *game) {
         if (game->keyboard.keys[SDL_SCANCODE_SPACE].pressed) {
             hardDropActivePiece(game);
             game->keyboard.keys[SDL_SCANCODE_SPACE].pressed = false;
+            game->board.lastSuccessfulMove = SDL_GetPerformanceCounter();
         }
     }
 }
@@ -747,7 +753,7 @@ void runGame(Game *game) {
         updateGhostPiece(game);
         if (game->board.activePiece != NULL && !canActivePieceDrop(game) &&
             !isActivePieceValid(game)) {
-            log_info("You suck! game over!");
+            log_info("You lose! game over!");
             return;
         }
     };

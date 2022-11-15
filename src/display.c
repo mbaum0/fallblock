@@ -45,6 +45,11 @@ void drawBackground(GameMedia *gameMedia) {
 }
 
 void drawTileOnBoard(Tile *tile, GameMedia *gameMedia) {
+    if (tile->y >= GAME_HEIGHT){
+        // don't dry if tile isn't on the game board
+        return;
+    }
+
     int32_t x = GB_X_TO_PX(tile->x);
     int32_t y = GB_Y_TO_PX(tile->y);
 
