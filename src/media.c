@@ -96,15 +96,17 @@ void destroySDL(GameMedia *gameMedia) {
     SDL_Quit();
 }
 
-bool initMedia(GameMedia *gameMedia) {
+GameMedia *createGameMedia(void) {
+    GameMedia *gameMedia = calloc(1, sizeof(GameMedia));
     bool res =
         (initSDL(gameMedia) && loadTextures(gameMedia) && loadFonts(gameMedia));
     initColors(gameMedia);
     return res;
 }
 
-void destroyMedia(GameMedia *gameMedia) {
-    destroyTextures(gameMedia);
-    destroyFonts(gameMedia);
-    destroySDL(gameMedia);
+void destroyGameMedia(GameMedia **gameMedia) {
+    destroyTextures(&gameMedia);
+    destroyFonts(&gameMedia);
+    destroySDL(&gameMedia);
+    safefree(gameMedia);
 }

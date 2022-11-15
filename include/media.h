@@ -1,5 +1,6 @@
 #pragma once
 #include "log.h"
+#include "util.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_ttf.h>
@@ -39,17 +40,16 @@ struct GameMedia {
 };
 
 /**
- * @brief Initializes the renderer, window, fonts and textures
+ * @brief Creates and initializes a GameMedia instance. Including the: renderer,
+ * window, fonts and textures
  *
- * @param gameMedia
- * @return true if media is successfully initialized
- * @return false if media failed to initialize
+ * @return GameMedia* new GameMedia instance
  */
-bool initMedia(GameMedia *gameMedia);
+GameMedia *createGameMedia(void);
 
 /**
  * @brief Cleans up all initialized game media
  *
  * @param gameMedia GameMedia instance to destroy
  */
-void destroyMedia(GameMedia *gameMedia);
+void destroyGameMedia(GameMedia **gameMedia);
