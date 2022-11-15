@@ -1,5 +1,5 @@
 #pragma once
-#include "game.h"
+#include "board.h"
 #include "media.h"
 #include "util.h"
 
@@ -8,4 +8,4 @@
  *
  * @param game The game instance
  */
-void updateDisplay(GameMedia* media, GameBoard* board);
+void updateDisplay(GameMedia *media, GameBoard *board);

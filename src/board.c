@@ -27,8 +27,8 @@ GameBoard *createGameBoard(void) {
     newGame->nextPieceType = getRandomPieceType();
     newGame->score = 0;
     newGame->level = 1;
-    newGame->lastSuccessfulMoveTS = SDL_GetPerformanceTimer();
-    newGame->lastDropTS = SDL_GetPerformanceTimer();
+    newGame->lastSuccessfulMoveTS = SDL_GetPerformanceCounter();
+    newGame->lastDropTS = SDL_GetPerformanceCounter();
 
     return newGame;
 }
@@ -239,4 +239,5 @@ bool stepGameBoard(GameBoard *board) {
     stepActivePiece(board);
     stepGhostPiece(board);
     processCompletedRows(board);
+    return false;
 }

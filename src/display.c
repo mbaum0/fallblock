@@ -85,7 +85,7 @@ void drawActivePiece(GameMedia *gameMedia, GameBoard *gameBoard) {
     if (gameBoard->activePiece != NULL) {
         for (uint32_t i = 0; i < 4; i++) {
             Tile *tile = gameBoard->activePiece->tiles[i];
-            drawTileOnBoard(tile, gameMedia);
+            drawTileOnBoard(gameMedia, tile);
         }
     }
 }
@@ -94,7 +94,7 @@ void drawGhostPiece(GameMedia *gameMedia, GameBoard *gameBoard) {
     if (gameBoard->ghostPiece != NULL) {
         for (uint32_t i = 0; i < 4; i++) {
             Tile *tile = gameBoard->ghostPiece->tiles[i];
-            drawGhostTileOnBoard(tile, gameMedia);
+            drawGhostTileOnBoard(gameMedia, tile);
         }
     }
 }
@@ -104,7 +104,7 @@ void drawLockedTiles(GameMedia *gameMedia, GameBoard *gameBoard) {
         for (uint32_t y = 0; y < GAME_HEIGHT; y++) {
             Tile *tile = gameBoard->playField[x][y];
             if (tile != NULL) {
-                drawTileOnBoard(tile, gameMedia);
+                drawTileOnBoard(gameMedia, tile);
             }
         }
     }
@@ -124,13 +124,13 @@ void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
     SDL_FreeSurface(textSurface);
 }
 
-void drawScore(GameMedia *gameMedia, GameBoard *gameBoard){
+void drawScore(GameMedia *gameMedia, GameBoard *gameBoard) {
     snprintf(scoreString, 100, "Score: %u", gameBoard->score);
     drawText(gameMedia, scoreString, 32, 32, gameMedia->fonts.gameFont,
              gameMedia->colors.white);
 }
 
-void drawLevel(GameMedia *gameMedia, GameBoard *gameBoard){
+void drawLevel(GameMedia *gameMedia, GameBoard *gameBoard) {
     snprintf(levelString, 100, "Level: %u", gameBoard->level);
     drawText(gameMedia, levelString, 32, 64, gameMedia->fonts.gameFont,
              gameMedia->colors.white);
@@ -160,7 +160,7 @@ void drawNextPiece(GameMedia *gameMedia, GameBoard *gameBoard) {
     safefree(&nextPiece);
 }
 
-void updateDisplay(GameMedia* media, GameBoard* board) {
+void updateDisplay(GameMedia *media, GameBoard *board) {
     clearScene(media);
     drawBackground(media);
     drawScore(media, board);

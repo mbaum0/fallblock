@@ -1,8 +1,8 @@
 #include "board.h"
-#include "media.h"
-#include "log.h"
-#include <stdint.h>
 #include "display.h"
+#include "log.h"
+#include "media.h"
+#include <stdint.h>
 
 int main(int argc, char **argv) {
     (void)argc;
@@ -20,11 +20,11 @@ int main(int argc, char **argv) {
     // destroyGame(theGame);
 
     srand(time(0));
-    GameMedia* media = createGameMedia();
-    
-    GameBoard* board = createGameBoard();
+    GameMedia *media = createGameMedia();
 
-    while(true){
+    GameBoard *board = createGameBoard();
+
+    while (true) {
         stepGameBoard(board);
         updateDisplay(media, board);
     }

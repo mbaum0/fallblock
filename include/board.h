@@ -2,9 +2,10 @@
 
 typedef struct GameBoard GameBoard;
 
-#include "SDL.h"
+#include "log.h"
 #include "piece.h"
 #include "util.h"
+#include <SDL.h>
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
