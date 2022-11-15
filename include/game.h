@@ -58,5 +58,6 @@ void destroyGame(Game *game);
  * @brief Start running the game
  *
  * @param game game instance to begin
+ * @return true if the game should quit
  */
-void runGame(Game *game);
+bool stepGame(Game *game);

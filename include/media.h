@@ -6,7 +6,7 @@
 #include <stdbool.h>
 
 #define TILE_SIZE 32
-#define WINDOW_WIDTH 576
+#define WINDOW_WIDTH 576 * 2
 #define WINDOW_HEIGHT 704
 
 typedef struct TexturePack TexturePack;

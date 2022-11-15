@@ -7,6 +7,12 @@ int main(int argc, char** argv) {
     (void)argv;
     srand(time(0));
     Game *theGame = createGame();
-    runGame(theGame);
+    if (!initMedia(&theGame->media)){
+        log_error("Failed to initialize media\n");
+        return 0;
+    }
+    Game *theGame2 = createGame();
+    while(!stepGame(theGame));
+    //runGame(theGame);
     destroyGame(theGame);
 }

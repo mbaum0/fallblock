@@ -8,11 +8,6 @@ void hardDropPiece(Game *game, Piece *piece);
 
 Game *createGame(void) {
     Game *newGame = calloc(1, sizeof(Game));
-    if (!initMedia(&newGame->media)) {
-        log_error("Failed to initialize media\n");
-        return NULL;
-    }
-
     newGame->boardOne.nextPieceType = getRandomPieceType();
     newGame->boardOne.score = 0;
     newGame->boardOne.level = 1;
@@ -741,20 +736,23 @@ bool shouldDropPiece(Game *game, uint32_t dropDelayMS) {
     return false;
 }
 
-void runGame(Game *game) {
-    while (!processInput(&game->keyboard)) {
-        if (shouldTick(game)) {
-            updateDisplay(game);
+bool stepGame(Game *game) {
+    bool ret = processInput(&game->keyboard);
+    if (ret){
+        return true;
+    }
+    if (shouldTick(game)) {
+        updateDisplay(game);
 
-            doPieceLogic(game);
-        }
-        doInputLogic(game);
-        processCompletedRows(game);
-        updateGhostPiece(game);
-        if (game->boardOne.activePiece != NULL && !canActivePieceDrop(game) &&
-            !isActivePieceValid(game)) {
-            log_info("You lose! game over!");
-            return;
-        }
-    };
+        doPieceLogic(game);
+    }
+    doInputLogic(game);
+    processCompletedRows(game);
+    updateGhostPiece(game);
+    if (game->boardOne.activePiece != NULL && !canActivePieceDrop(game) &&
+        !isActivePieceValid(game)) {
+        log_info("You lose! game over!");
+        return true;
+    }
+    return false;
 }
