@@ -11,6 +11,8 @@ apt install libsdl2-mixer-dev
 
 ## MacOs Dependency Install
 ```bash
+brew install cmake
+
 # install sdl2 dependencies
 brew install sdl2
 brew install sdl2_image
