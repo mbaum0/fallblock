@@ -6,13 +6,15 @@
 void clearScene(GameMedia *gameMedia);
 void presentScene(GameMedia *gameMedia);
 void drawBackground(GameMedia *gameMedia);
-void drawTileOnBoard(Tile *tile, GameMedia *gameMedia);
-void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia);
-void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia);
+void drawTileOnBoard(GameMedia *gameMedia, Tile *tile);
+void drawGhostTileOnBoard(GameMedia *gameMedia, Tile *tile);
+void drawActivePiece(GameMedia *gameMedia, GameBoard *gameBoard);
+void drawGhostPiece(GameMedia *gameMedia, GameBoard *gameBoard);
 void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
               TTF_Font *font, SDL_Color color);
-void drawScore(GameBoard *gameBoard, GameMedia *gameMedia);
-void drawLevel(GameBoard *gameBoard, GameMedia *gameMedia);
+void drawScore(GameMedia *gameMedia, GameBoard *gameBoard);
+void drawLevel(GameMedia *gameMedia, GameBoard *gameBoard);
+void drawNextPiece(GameMedia *gameMedia, GameBoard *gameBoard);
 
 char scoreString[100];
 char levelString[100];
@@ -44,7 +46,7 @@ void drawBackground(GameMedia *gameMedia) {
     SDL_RenderFillRect(gameMedia->renderer, &rect);
 }
 
-void drawTileOnBoard(Tile *tile, GameMedia *gameMedia) {
+void drawTileOnBoard(GameMedia *gameMedia, Tile *tile) {
     if (tile->y >= GAME_HEIGHT) {
         // don't dry if tile isn't on the game board
         return;
@@ -66,7 +68,7 @@ void drawTileOnBoard(Tile *tile, GameMedia *gameMedia) {
     SDL_RenderCopy(gameMedia->renderer, gameMedia->textures.tiles, &src, &dst);
 }
 
-void drawGhostTileOnBoard(Tile *tile, GameMedia *gameMedia) {
+void drawGhostTileOnBoard(GameMedia *gameMedia, Tile *tile) {
     int32_t x = GB_X_TO_PX(tile->x);
     int32_t y = GB_Y_TO_PX(tile->y);
 
@@ -79,7 +81,7 @@ void drawGhostTileOnBoard(Tile *tile, GameMedia *gameMedia) {
     SDL_RenderDrawRect(gameMedia->renderer, &rect);
 }
 
-void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia) {
+void drawActivePiece(GameMedia *gameMedia, GameBoard *gameBoard) {
     if (gameBoard->activePiece != NULL) {
         for (uint32_t i = 0; i < 4; i++) {
             Tile *tile = gameBoard->activePiece->tiles[i];
@@ -88,7 +90,7 @@ void drawActivePiece(GameBoard *gameBoard, GameMedia *gameMedia) {
     }
 }
 
-void drawGhostPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
+void drawGhostPiece(GameMedia *gameMedia, GameBoard *gameBoard) {
     if (gameBoard->ghostPiece != NULL) {
         for (uint32_t i = 0; i < 4; i++) {
             Tile *tile = gameBoard->ghostPiece->tiles[i];
@@ -97,7 +99,7 @@ void drawGhostPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
     }
 }
 
-void drawLockedTiles(GameBoard *gameBoard, GameMedia *gameMedia) {
+void drawLockedTiles(GameMedia *gameMedia, GameBoard *gameBoard) {
     for (uint32_t x = 0; x < GAME_WIDTH; x++) {
         for (uint32_t y = 0; y < GAME_HEIGHT; y++) {
             Tile *tile = gameBoard->playField[x][y];
@@ -122,19 +124,19 @@ void drawText(GameMedia *gameMedia, char *str, uint32_t x, uint32_t y,
     SDL_FreeSurface(textSurface);
 }
 
-void drawScore(GameBoard *gameBoard, GameMedia *gameMedia) {
+void drawScore(GameMedia *gameMedia, GameBoard *gameBoard){
     snprintf(scoreString, 100, "Score: %u", gameBoard->score);
     drawText(gameMedia, scoreString, 32, 32, gameMedia->fonts.gameFont,
              gameMedia->colors.white);
 }
 
-void drawLevel(GameBoard *gameBoard, GameMedia *gameMedia) {
+void drawLevel(GameMedia *gameMedia, GameBoard *gameBoard){
     snprintf(levelString, 100, "Level: %u", gameBoard->level);
     drawText(gameMedia, levelString, 32, 64, gameMedia->fonts.gameFont,
              gameMedia->colors.white);
 }
 
-void drawNextPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
+void drawNextPiece(GameMedia *gameMedia, GameBoard *gameBoard) {
     Piece *nextPiece = createNewPiece(0, 0, gameBoard->nextPieceType);
     for (uint32_t i = 0; i < 4; i++) {
         Tile *tile = nextPiece->tiles[i];
@@ -153,19 +155,19 @@ void drawNextPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
                        &dst);
     }
     for (uint32_t i = 0; i < 4; i++) {
-        free(nextPiece->tiles[i]);
+        safefree(&nextPiece->tiles[i]);
     }
-    free(nextPiece);
+    safefree(&nextPiece);
 }
 
-void updateDisplay(Game *game) {
-    clearScene(&game->media);
-    drawBackground(&game->media);
-    drawScore(&game->boardOne, &game->media);
-    drawLevel(&game->boardOne, &game->media);
-    drawActivePiece(&game->boardOne, &game->media);
-    drawGhostPiece(&game->boardOne, &game->media);
-    drawLockedTiles(&game->boardOne, &game->media);
-    drawNextPiece(&game->boardOne, &game->media);
-    presentScene(&game->media);
+void updateDisplay(GameMedia* media, GameBoard* board) {
+    clearScene(media);
+    drawBackground(media);
+    drawScore(media, board);
+    drawLevel(media, board);
+    drawActivePiece(media, board);
+    drawGhostPiece(media, board);
+    drawLockedTiles(media, board);
+    drawNextPiece(media, board);
+    presentScene(media);
 }
