@@ -1,3 +1,7 @@
 #pragma once
 
-#define safefree(x) if(x!=NULL){free(x);}
+#define safefree(x)                                                            \
+    if (*x != NULL) {                                                          \
+        free(*x);                                                              \
+        *x = NULL;                                                             \
+    }

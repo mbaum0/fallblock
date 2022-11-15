@@ -8,9 +8,9 @@ typedef struct GameBoard GameBoard;
 #include "log.h"
 #include "media.h"
 #include "piece.h"
+#include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include <math.h>
 
 #define GAME_WIDTH 10
 #define GAME_HEIGHT 20

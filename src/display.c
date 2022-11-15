@@ -45,7 +45,7 @@ void drawBackground(GameMedia *gameMedia) {
 }
 
 void drawTileOnBoard(Tile *tile, GameMedia *gameMedia) {
-    if (tile->y >= GAME_HEIGHT){
+    if (tile->y >= GAME_HEIGHT) {
         // don't dry if tile isn't on the game board
         return;
     }
@@ -158,7 +158,7 @@ void drawNextPiece(GameBoard *gameBoard, GameMedia *gameMedia) {
     free(nextPiece);
 }
 
-void updateDisplay(Game* game) {
+void updateDisplay(Game *game) {
     clearScene(&game->media);
     drawBackground(&game->media);
     drawScore(&game->boardOne, &game->media);

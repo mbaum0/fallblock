@@ -39,8 +39,7 @@ void destroyGameBoard(GameBoard *gameBoard) {
         free(gameBoard->activePiece);
     }
 
-
-    if (gameBoard->ghostPiece != NULL){
+    if (gameBoard->ghostPiece != NULL) {
         for (uint32_t i = 0; i < 4; i++) {
             free(gameBoard->ghostPiece->tiles[i]);
         }
@@ -61,7 +60,8 @@ void createNextPiece(Game *game) {
         createNewPiece(spawnx, spawny, game->boardOne.nextPieceType);
     game->boardOne.nextPieceType = getRandomPieceType();
 
-    game->boardOne.ghostPiece = createNewPiece(0, 0, game->boardOne.nextPieceType);
+    game->boardOne.ghostPiece =
+        createNewPiece(0, 0, game->boardOne.nextPieceType);
 }
 
 void updateGhostPiece(Game *game) {
@@ -124,7 +124,7 @@ bool canMovePiece(Game *game, Piece *piece, int32_t dx, int32_t dy) {
 
         // we only need to check for collisions if the tile is
         // on the board (not still above it)
-        if (newY >= 0 && newX >= 0){
+        if (newY >= 0 && newX >= 0) {
             if (game->boardOne.playField[newX][newY] != NULL) {
                 return false;
             }
@@ -218,7 +218,7 @@ void lockActivePieceOnBoard(Game *game) {
     }
     free(game->boardOne.activePiece);
 
-    for (uint32_t i = 0; i < 4; i++){
+    for (uint32_t i = 0; i < 4; i++) {
         free(game->boardOne.ghostPiece->tiles[i]);
     }
 
@@ -738,7 +738,7 @@ bool shouldDropPiece(Game *game, uint32_t dropDelayMS) {
 
 bool stepGame(Game *game) {
     bool ret = processInput(&game->keyboard);
-    if (ret){
+    if (ret) {
         return true;
     }
     if (shouldTick(game)) {

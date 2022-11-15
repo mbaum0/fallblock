@@ -7,4 +7,4 @@
  *
  * @param game The game instance
  */
-void updateDisplay(Game* game);
+void updateDisplay(Game *game);
