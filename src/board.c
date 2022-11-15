@@ -97,10 +97,12 @@ void lockActivePiece(GameBoard *board) {
     }
     safefree(&board->activePiece);
 
-    for (uint32_t i = 0; i < 4; i++) {
-        safefree(&board->ghostPiece->tiles[i]);
+    if (board->ghostPiece != NULL) {
+        for (uint32_t i = 0; i < 4; i++) {
+            safefree(&board->ghostPiece->tiles[i]);
+        }
+        safefree(&board->ghostPiece);
     }
-    safefree(&board->ghostPiece);
 }
 
 void hardDropPiece(GameBoard *board, Piece *piece) {

@@ -23,6 +23,15 @@
                     "ignoreFailures": true
                 }
             ]
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Launch",
+            "program": "${workspaceFolder}/build/fallblock",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false,
         }
     ],
     "version": "2.0.0"

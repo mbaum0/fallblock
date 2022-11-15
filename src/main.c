@@ -3,6 +3,7 @@
 #include "log.h"
 #include "media.h"
 #include <stdint.h>
+#include <unistd.h>
 
 int main(int argc, char **argv) {
     (void)argc;
@@ -27,5 +28,6 @@ int main(int argc, char **argv) {
     while (true) {
         stepGameBoard(board);
         updateDisplay(media, board);
+        sleep(100);
     }
 }
