@@ -7,6 +7,7 @@ apt install libsdl2-dev
 apt install libsdl2-image-dev
 apt install libsdl2-ttf-dev
 apt install libsdl2-mixer-dev
+apt install libsdl2-net-dev
 ```
 
 ## MacOs Dependency Install
@@ -17,6 +18,7 @@ brew install cmake
 brew install sdl2
 brew install sdl2_image
 brew install sdl2_ttf
+brew install sdl2_net
 ```
 
 ## Building

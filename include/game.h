@@ -6,6 +6,7 @@ typedef struct GameRunner GameRunner;
 #include "display.h"
 #include "input.h"
 #include "media.h"
+#include "network.h"
 #include "util.h"
 #include <stdio.h>
 
@@ -24,6 +25,7 @@ struct GameRunner {
     GameBoard *board2;
     Keyboard keyboard;
     GameMedia *media;
+    NetKit *netkit;
 };
 
 GameRunner *createGame(GameMode gm);

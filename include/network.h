@@ -1,10 +1,13 @@
 #pragma once
 #include "board.h"
+#include <SDL_net.h>
+#include <arpa/inet.h>
 #include <stdint.h>
 #include <stdio.h>
 
 typedef struct WirePacket WirePacket;
 typedef struct WireTile WireTile;
+typedef struct NetKit NetKit;
 
 struct WireTile {
     uint8_t x;
@@ -18,6 +21,14 @@ struct WirePacket {
     uint32_t score;
     uint32_t numTiles;
     WireTile tiles[];
+};
+
+struct NetKit {
+    IPaddress remoteIP;
+    UDPsocket udpsock;
+    UDPpacket *recv_packet;
+    SDLNet_SocketSet socketset;
+    uint32_t numused;
 };
 
 /**
@@ -48,3 +59,8 @@ uint32_t serializeBoard(GameBoard *board, uint8_t **dst);
  * @param src Byte data containing a serialized WirePacket
  */
 void deserializeBoard(GameBoard *target, uint8_t *src);
+
+NetKit *initNetworking(void);
+void destroyNetworking(NetKit *kit);
+
+void checkForPackets(NetKit *kit);

@@ -41,6 +41,7 @@ GameRunner *createGame(GameMode gm) {
 
     if (gm == MULTI_PLAYER) {
         gr->board2 = createGameBoard();
+        gr->netkit = initNetworking();
     }
 
     return gr;
@@ -67,6 +68,7 @@ void runGame(GameRunner *game) {
             handleInput(game->board2, &game->keyboard, PLAYER_TWO);
         }
         updateDisplay(game->media, game->board1, game->board2);
-        SDL_Delay(16);
+        // SDL_Delay(16);
+        checkForPackets(game->netkit);
     }
 }
