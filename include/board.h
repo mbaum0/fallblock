@@ -2,6 +2,7 @@
 
 typedef struct GameBoard GameBoard;
 
+#include "kick.h"
 #include "log.h"
 #include "piece.h"
 #include "util.h"
@@ -9,7 +10,6 @@ typedef struct GameBoard GameBoard;
 #include <math.h>
 #include <stdbool.h>
 #include <stdint.h>
-#include "kick.h"
 
 #define GAME_WIDTH 10
 #define GAME_HEIGHT 20

@@ -75,17 +75,17 @@ bool canActivePieceDrop(GameBoard *board) {
     return canPieceDrop(board, board->activePiece);
 }
 
-bool canPieceMove(GameBoard *board, Piece *piece, int32_t dx, int32_t dy){
-    for (uint32_t i = 0; i < 4; i ++){
+bool canPieceMove(GameBoard *board, Piece *piece, int32_t dx, int32_t dy) {
+    for (uint32_t i = 0; i < 4; i++) {
         int32_t newX = piece->tiles[i]->x + dx;
         int32_t newY = piece->tiles[i]->y + dy;
-        if (newX < 0 || newX >= GAME_WIDTH || newY < 0){
+        if (newX < 0 || newX >= GAME_WIDTH || newY < 0) {
             return false;
         }
 
         // check for collisions
-        if (newY >=0 && newX >=0 && newY < GAME_HEIGHT){
-            if (board->playField[newX][newY] != NULL){
+        if (newY >= 0 && newX >= 0 && newY < GAME_HEIGHT) {
+            if (board->playField[newX][newY] != NULL) {
                 return false;
             }
         }
@@ -93,7 +93,7 @@ bool canPieceMove(GameBoard *board, Piece *piece, int32_t dx, int32_t dy){
     return true;
 }
 
-bool canActivePieceMove(GameBoard *board, int32_t dx, int32_t dy){
+bool canActivePieceMove(GameBoard *board, int32_t dx, int32_t dy) {
     return canPieceMove(board, board->activePiece, dx, dy);
 }
 
@@ -265,69 +265,72 @@ void processCompletedRows(GameBoard *board) {
     }
 }
 
-void attemptRotation(GameBoard *board, bool clockwise){
-    Piece* active = board->activePiece;
-    if (clockwise){
+void attemptRotation(GameBoard *board, bool clockwise) {
+    Piece *active = board->activePiece;
+    if (clockwise) {
         rotatePieceClockwise(active);
     } else {
         rotatePieceCounterClockwise(active);
     }
 
-    if (canActivePieceMove(board, 0, 0)){
+    if (canActivePieceMove(board, 0, 0)) {
         // piece is valid
         return;
     }
 
     int32_t dx, dy = 0;
-    getKickOffsets(active->pieceType, active->pieceState, KT_A, clockwise, &dx, &dy);
-    if (canActivePieceMove(board, dx, dy)){
+    getKickOffsets(active->pieceType, active->pieceState, KT_A, clockwise, &dx,
+                   &dy);
+    if (canActivePieceMove(board, dx, dy)) {
         movePiece(active, dx, dy);
         // piece is valid
         return;
     }
 
-    getKickOffsets(active->pieceType, active->pieceState, KT_B, clockwise, &dx, &dy);
-    if (canActivePieceMove(board, dx, dy)){
+    getKickOffsets(active->pieceType, active->pieceState, KT_B, clockwise, &dx,
+                   &dy);
+    if (canActivePieceMove(board, dx, dy)) {
         movePiece(active, dx, dy);
         // piece is valid
         return;
     }
 
-    getKickOffsets(active->pieceType, active->pieceState, KT_C, clockwise, &dx, &dy);
-    if (canActivePieceMove(board, dx, dy)){
+    getKickOffsets(active->pieceType, active->pieceState, KT_C, clockwise, &dx,
+                   &dy);
+    if (canActivePieceMove(board, dx, dy)) {
         movePiece(active, dx, dy);
         // piece is valid
         return;
     }
 
-    getKickOffsets(active->pieceType, active->pieceState, KT_D, clockwise, &dx, &dy);
-    if (canActivePieceMove(board, dx, dy)){
+    getKickOffsets(active->pieceType, active->pieceState, KT_D, clockwise, &dx,
+                   &dy);
+    if (canActivePieceMove(board, dx, dy)) {
         movePiece(active, dx, dy);
         // piece is valid
         return;
     }
 
     // no kick worked, revert rotation
-    if (clockwise){
+    if (clockwise) {
         rotatePieceCounterClockwise(active);
     } else {
         rotatePieceClockwise(active);
     }
-
 }
-void attemptMoveLeft(GameBoard *board){
-    if (canActivePieceMove(board, -1, 0)){
+void attemptMoveLeft(GameBoard *board) {
+    if (canActivePieceMove(board, -1, 0)) {
         movePiece(board->activePiece, -1, 0);
     }
 }
-void attemptMoveRight(GameBoard *board){
-    if (canActivePieceMove(board, 1, 0)){
+void attemptMoveRight(GameBoard *board) {
+    if (canActivePieceMove(board, 1, 0)) {
         movePiece(board->activePiece, 1, 0);
     }
 }
 
 void processCommandEvent(GameBoard *board, CommandEvent cmd) {
-    if(board->activePiece == NULL){
+    if (board->activePiece == NULL) {
         return;
     }
     switch (cmd) {
