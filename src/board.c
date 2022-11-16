@@ -215,6 +215,7 @@ void updateScore(GameBoard *board, uint32_t numRows) {
         break;
     case 4:
         score = 8;
+        break;
     default:
         score = 0;
         break;
