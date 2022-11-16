@@ -53,7 +53,7 @@ uint32_t serializeBoard(GameBoard *board, uint8_t **dst) {
 }
 
 void deserializeBoard(GameBoard *target, uint8_t *src) {
-    WirePacket* wp = (WirePacket*)src;
+    WirePacket *wp = (WirePacket *)src;
     target->level = wp->level;
     target->score = wp->score;
 
