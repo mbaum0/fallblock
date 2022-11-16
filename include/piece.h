@@ -8,23 +8,23 @@ typedef struct Tile Tile;
 typedef struct TileLocation TileLocation;
 
 typedef enum {
-    Piece_I,
-    Piece_J,
-    Piece_L,
-    Piece_O,
-    Piece_S,
-    Piece_T,
-    Piece_Z
+    Piece_I = 0,
+    Piece_J = 1,
+    Piece_L = 2,
+    Piece_O = 3,
+    Piece_S = 4,
+    Piece_T = 5,
+    Piece_Z = 6
 } PieceType;
 
 typedef enum {
-    TC_Red,
-    TC_Blue,
-    TC_Yellow,
-    TC_Purple,
-    TC_Orange,
-    TC_Green,
-    TC_Pink
+    TC_Red = 0,
+    TC_Blue = 1,
+    TC_Yellow = 2,
+    TC_Purple = 3,
+    TC_Orange = 4,
+    TC_Green = 5,
+    TC_Pink = 6
 } TileColor;
 
 typedef enum { PS_A, PS_B, PS_C, PS_D } PieceState;
