@@ -15,9 +15,9 @@ bool initSDL(GameMedia *gameMedia) {
         return false;
     }
 
-    gameMedia->window = SDL_CreateWindow("FallBlock!", SDL_WINDOWPOS_UNDEFINED,
-                                         SDL_WINDOWPOS_UNDEFINED, WINDOW_WIDTH,
-                                         WINDOW_HEIGHT, 0);
+    gameMedia->window = SDL_CreateWindow(
+        "FallBlock!", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+        gameMedia->windowWidth, gameMedia->windowHeight, 0);
 
     if (!gameMedia->window) {
         log_error("Failed to open %d x %d window: %s", WINDOW_WIDTH,
@@ -96,8 +96,16 @@ void destroySDL(GameMedia *gameMedia) {
     SDL_Quit();
 }
 
-GameMedia *createGameMedia(void) {
+GameMedia *createGameMedia(GameMode mode) {
     GameMedia *gameMedia = calloc(1, sizeof(GameMedia));
+
+    if (mode == SINGLE_PLAYER) {
+        gameMedia->windowHeight = WINDOW_HEIGHT;
+        gameMedia->windowWidth = WINDOW_WIDTH;
+    } else {
+        gameMedia->windowHeight = WINDOW_HEIGHT;
+        gameMedia->windowWidth = WINDOW_WIDTH * 2;
+    }
     bool initSuccess =
         (initSDL(gameMedia) && loadTextures(gameMedia) && loadFonts(gameMedia));
     initColors(gameMedia);

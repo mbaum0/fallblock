@@ -37,15 +37,19 @@ struct GameMedia {
     TexturePack textures;
     FontPack fonts;
     ColorPack colors;
+    uint32_t windowWidth;
+    uint32_t windowHeight;
 };
 
 /**
  * @brief Creates and initializes a GameMedia instance. Including the: renderer,
  * window, fonts and textures
  *
+ * @param mode Single or Multiplayer mode
+ *
  * @return GameMedia* new GameMedia instance
  */
-GameMedia *createGameMedia(void);
+GameMedia *createGameMedia(GameMode mode);
 
 /**
  * @brief Cleans up all initialized game media

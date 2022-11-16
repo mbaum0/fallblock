@@ -5,37 +5,37 @@ bool shouldPerformKeyEvent(Keyboard *keyboard, SDL_Scancode sc) {
     return (keyboard->keys[sc].pressed && !keyboard->keys[sc].read);
 }
 
-void handleInput(GameBoard *board, Keyboard *keyboard) {
-    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_RIGHT)) {
+void handleInput(GameBoard *board, Keyboard *keyboard, PlayerNum player) {
+    if (shouldPerformKeyEvent(keyboard, PLAYER_RIGHT(player))) {
         processCommandEvent(board, IE_MOVE_RIGHT);
-        keyboard->keys[SDL_SCANCODE_RIGHT].read = true;
+        keyboard->keys[PLAYER_RIGHT(player)].read = true;
     }
 
-    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_LEFT)) {
+    if (shouldPerformKeyEvent(keyboard, PLAYER_LEFT(player))) {
         processCommandEvent(board, IE_MOVE_LEFT);
-        keyboard->keys[SDL_SCANCODE_LEFT].read = true;
+        keyboard->keys[PLAYER_LEFT(player)].read = true;
     }
 
-    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_Z)) {
+    if (shouldPerformKeyEvent(keyboard, PLAYER_ROTATE_CC(player))) {
         processCommandEvent(board, IE_ROTATE_COUNTER_CLOCKWISE);
-        keyboard->keys[SDL_SCANCODE_Z].read = true;
+        keyboard->keys[PLAYER_ROTATE_CC(player)].read = true;
     }
 
-    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_X)) {
+    if (shouldPerformKeyEvent(keyboard, PLAYER_ROTATE_C(player))) {
         processCommandEvent(board, IE_ROTATE_CLOCKWISE);
-        keyboard->keys[SDL_SCANCODE_X].read = true;
+        keyboard->keys[PLAYER_ROTATE_C(player)].read = true;
     }
 
-    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_SPACE)) {
+    if (shouldPerformKeyEvent(keyboard, PLAYER_HARD_DROP(player))) {
         processCommandEvent(board, IE_HARD_DROP);
-        keyboard->keys[SDL_SCANCODE_SPACE].read = true;
+        keyboard->keys[PLAYER_HARD_DROP(player)].read = true;
     }
 }
 
 GameRunner *createGame(GameMode gm) {
     GameRunner *gr = calloc(1, sizeof(GameRunner));
     gr->mode = gm;
-    gr->media = createGameMedia();
+    gr->media = createGameMedia(gm);
 
     gr->board1 = createGameBoard();
 
@@ -62,11 +62,11 @@ void runGame(GameRunner *game) {
             stepGameBoard(game->board2);
         }
 
-        handleInput(game->board1, &game->keyboard);
+        handleInput(game->board1, &game->keyboard, PLAYER_ONE);
         if (game->mode == MULTI_PLAYER) {
-            handleInput(game->board2, &game->keyboard);
+            handleInput(game->board2, &game->keyboard, PLAYER_TWO);
         }
-        updateDisplay(game->media, game->board1);
+        updateDisplay(game->media, game->board1, game->board2);
         SDL_Delay(16);
     }
 }
