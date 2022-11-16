@@ -21,8 +21,7 @@ void dropTilesAboveRow(GameBoard *board, uint32_t row);
 void updateScore(GameBoard *board, uint32_t numRows);
 void updateLevel(GameBoard *board);
 void updateDropDelay(GameBoard *board);
-void attemptClockwiseRotation(GameBoard *board);
-void attemptCounterClockwiseRotation(GameBoard *board);
+void attemptRotation(GameBoard *board, bool clockwise);
 void attemptMoveLeft(GameBoard *board);
 void attemptMoveRight(GameBoard *board);
 
@@ -85,7 +84,7 @@ bool canPieceMove(GameBoard *board, Piece *piece, int32_t dx, int32_t dy){
         }
 
         // check for collisions
-        if (newY >=0 && newX >=0){
+        if (newY >=0 && newX >=0 && newY < GAME_HEIGHT){
             if (board->playField[newX][newY] != NULL){
                 return false;
             }
@@ -266,35 +265,80 @@ void processCompletedRows(GameBoard *board) {
     }
 }
 
-void attemptClockwiseRotation(GameBoard *board){
+void attemptRotation(GameBoard *board, bool clockwise){
     Piece* active = board->activePiece;
-    rotatePieceClockwise(active);
+    if (clockwise){
+        rotatePieceClockwise(active);
+    } else {
+        rotatePieceCounterClockwise(active);
+    }
+
     if (canActivePieceMove(board, 0, 0)){
         // piece is valid
         return;
     }
 
-    int32_t *dx, *dy;
-    getKickOffsets(active->pieceType, active->pieceState, KT_A, true, dx, dy);
-    if (canActivePieceMove(board, *dx, *dy)){
-        movePiece(active, *dx, *dy);
+    int32_t dx, dy = 0;
+    getKickOffsets(active->pieceType, active->pieceState, KT_A, clockwise, &dx, &dy);
+    if (canActivePieceMove(board, dx, dy)){
+        movePiece(active, dx, dy);
+        // piece is valid
+        return;
     }
-    
+
+    getKickOffsets(active->pieceType, active->pieceState, KT_B, clockwise, &dx, &dy);
+    if (canActivePieceMove(board, dx, dy)){
+        movePiece(active, dx, dy);
+        // piece is valid
+        return;
+    }
+
+    getKickOffsets(active->pieceType, active->pieceState, KT_C, clockwise, &dx, &dy);
+    if (canActivePieceMove(board, dx, dy)){
+        movePiece(active, dx, dy);
+        // piece is valid
+        return;
+    }
+
+    getKickOffsets(active->pieceType, active->pieceState, KT_D, clockwise, &dx, &dy);
+    if (canActivePieceMove(board, dx, dy)){
+        movePiece(active, dx, dy);
+        // piece is valid
+        return;
+    }
+
+    // no kick worked, revert rotation
+    if (clockwise){
+        rotatePieceCounterClockwise(active);
+    } else {
+        rotatePieceClockwise(active);
+    }
+
 }
-void attemptCounterClockwiseRotation(GameBoard *board);
-void attemptMoveLeft(GameBoard *board);
-void attemptMoveRight(GameBoard *board);
+void attemptMoveLeft(GameBoard *board){
+    if (canActivePieceMove(board, -1, 0)){
+        movePiece(board->activePiece, -1, 0);
+    }
+}
+void attemptMoveRight(GameBoard *board){
+    if (canActivePieceMove(board, 1, 0)){
+        movePiece(board->activePiece, 1, 0);
+    }
+}
 
 void processCommandEvent(GameBoard *board, CommandEvent cmd) {
+    if(board->activePiece == NULL){
+        return;
+    }
     switch (cmd) {
     case IE_ROTATE_CLOCKWISE:
-        attemptClockwiseRotation(board);
+        attemptRotation(board, true);
         break;
     case IE_ROTATE_COUNTER_CLOCKWISE:
-        attemptCounterClockwiseRotation(board);
+        attemptRotation(board, false);
         break;
     case IE_HARD_DROP:
-        break;
+        hardDropPiece(board, board->activePiece);
     case IE_SOFT_DROP:
         break;
     case IE_MOVE_RIGHT:
@@ -306,6 +350,7 @@ void processCommandEvent(GameBoard *board, CommandEvent cmd) {
     default:
         break;
     }
+    board->lastSuccessfulMoveTS = SDL_GetPerformanceCounter();
 }
 
 bool stepGameBoard(GameBoard *board) {

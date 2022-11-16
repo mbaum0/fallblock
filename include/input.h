@@ -11,6 +11,7 @@ struct InputKey {
     SDL_Scancode key;
     bool pressed;
     bool held;
+    bool read; // for external use
 };
 
 struct Keyboard {

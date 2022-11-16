@@ -6,6 +6,40 @@
 #include <stdint.h>
 #include <unistd.h>
 
+
+bool shouldPerformKeyEvent(Keyboard* keyboard, SDL_Scancode sc){
+    // return if key has been pressed, but not read yet
+    return (keyboard->keys[sc].pressed && !keyboard->keys[sc].read);
+}
+
+
+void handleInput(GameBoard* board, Keyboard* keyboard){
+    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_RIGHT)){
+        processCommandEvent(board, IE_MOVE_RIGHT);
+        keyboard->keys[SDL_SCANCODE_RIGHT].read = true;
+    }
+
+    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_LEFT)){
+        processCommandEvent(board, IE_MOVE_LEFT);
+        keyboard->keys[SDL_SCANCODE_LEFT].read = true;
+    }
+
+    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_Z)){
+        processCommandEvent(board, IE_ROTATE_COUNTER_CLOCKWISE);
+        keyboard->keys[SDL_SCANCODE_Z].read = true;
+    }
+
+    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_X)){
+        processCommandEvent(board, IE_ROTATE_CLOCKWISE);
+        keyboard->keys[SDL_SCANCODE_X].read = true;
+    }
+
+    if (shouldPerformKeyEvent(keyboard, SDL_SCANCODE_SPACE)){
+        processCommandEvent(board, IE_HARD_DROP);
+        keyboard->keys[SDL_SCANCODE_SPACE].read = true;
+    }
+}
+
 int main(int argc, char **argv) {
     (void)argc;
     (void)argv;
@@ -29,6 +63,7 @@ int main(int argc, char **argv) {
     while (!processInput(&keyboard)) {
         stepGameBoard(board);
         updateDisplay(media, board);
-        SDL_Delay(100);
+        handleInput(board, &keyboard);
+        SDL_Delay(16);
     }
 }
