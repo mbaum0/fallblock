@@ -1,11 +1,14 @@
 #pragma once
-#include "game.h"
+#include "board.h"
 #include "media.h"
+#include "util.h"
 
 /**
  * @brief Update the graphical display with the current game status
  *
- * @param gameMedia GameMedia instance containing textures, fonts, etc.
- * @param gameBoard GameBoard instance containing the current state of the game
+ * @param media Game media instance containing textures, renderer, resources,
+ * etc
+ * @param board1 First players board. Must not be NULL
+ * @param board2 Second players board. Can be NULL if single player mode
  */
-void updateDisplay(GameMedia *gameMedia, GameBoard *gameBoard);
+void updateDisplay(GameMedia *media, GameBoard *board1, GameBoard *board2);
