@@ -39,4 +39,12 @@ struct WirePacket {
  * @param dst Pointer to destination of serialized data
  * @return length of serialized data
  */
-uint8_t *serializeBoard(GameBoard *board);
+uint32_t serializeBoard(GameBoard *board, uint8_t **dst);
+
+/**
+ * @brief Deserialize byte data to a target gameboard
+ *
+ * @param target GameBoard instance to update with src data
+ * @param src Byte data containing a serialized WirePacket
+ */
+void deserializeBoard(GameBoard *target, uint8_t *src);
