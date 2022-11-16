@@ -5,18 +5,20 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#define PACKED __attribute__((__packed__))
+
 typedef struct WirePacket WirePacket;
 typedef struct WireTile WireTile;
 typedef struct NetKit NetKit;
 
-struct WireTile {
+struct PACKED WireTile {
     uint8_t x;
     uint8_t y;
     uint8_t color;
     uint8_t padding;
 };
 
-struct WirePacket {
+struct PACKED WirePacket {
     uint32_t level;
     uint32_t score;
     uint32_t numTiles;
@@ -25,10 +27,10 @@ struct WirePacket {
 
 struct NetKit {
     IPaddress remoteIP;
-    UDPsocket udpsock;
-    UDPpacket *recv_packet;
-    SDLNet_SocketSet socketset;
-    uint32_t numused;
+    IPaddress localIP;
+    TCPsocket socket;
+    SDLNet_SocketSet socks;
+    bool connected;
 };
 
 /**
@@ -63,4 +65,7 @@ void deserializeBoard(GameBoard *target, uint8_t *src);
 NetKit *initNetworking(void);
 void destroyNetworking(NetKit *kit);
 
-void checkForPackets(NetKit *kit);
+void checkForBoardPacket(NetKit *kit, GameBoard *board);
+void sendBoardPacket(NetKit *kit, GameBoard *board);
+void configureClient(NetKit *kit);
+void configureServer(NetKit *kit);

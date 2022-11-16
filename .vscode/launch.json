@@ -29,7 +29,7 @@
             "request": "launch",
             "name": "(lldb) Launch",
             "program": "${workspaceFolder}/build/fallblock",
-            "args": [],
+            "args": ["multi", "client"],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false,
         }

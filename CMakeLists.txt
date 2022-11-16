@@ -32,7 +32,9 @@ target_link_libraries(${PROJECT_NAME} SDL2::TTF)
 
 # Add SDL2_net library
 find_package(SDL2_net REQUIRED)
-target_link_libraries(${PROJECT_NAME} SDL2:Net)
+target_link_libraries(${PROJECT_NAME} SDL2::Net)
+
+message(STATUS ${SDL2_NET_LIBRARY} ${SDL2_NET_INCLUDE_DIR})
 
 # Add math
 target_link_libraries(${PROJECT_NAME} m)

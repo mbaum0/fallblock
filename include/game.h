@@ -28,6 +28,6 @@ struct GameRunner {
     NetKit *netkit;
 };
 
-GameRunner *createGame(GameMode gm);
+GameRunner *createGame(GameMode gm, MPType mptype);
 void runGame(GameRunner *game);
 void destroyGame(GameRunner *game);
