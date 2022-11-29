@@ -7,4 +7,3 @@
     }
 
 typedef enum { SINGLE_PLAYER, MULTI_PLAYER } GameMode;
-typedef enum { MP_SERVER, MP_CLIENT } MPType;

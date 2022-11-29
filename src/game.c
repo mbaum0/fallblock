@@ -32,8 +32,7 @@ void handleInput(GameBoard *board, Keyboard *keyboard, PlayerNum player) {
     }
 }
 
-GameRunner *createGame(GameMode gm, MPType mptype) {
-    (void)mptype;
+GameRunner *createGame(GameMode gm, uint16_t localPort, uint16_t remotePort) {
     GameRunner *gr = calloc(1, sizeof(GameRunner));
     gr->mode = gm;
     gr->media = createGameMedia(gm);
@@ -42,12 +41,13 @@ GameRunner *createGame(GameMode gm, MPType mptype) {
 
     if (gm == MULTI_PLAYER) {
         gr->board2 = createGameBoard();
-        gr->netkit = initNetworking();
+        gr->netkit = initNetworking(localPort, remotePort);
         // if (mptype == MP_CLIENT) {
         //     configureClient(gr->netkit);
         // } else {
         //     configureServer(gr->netkit);
         // }
+        listenForConnections(gr->netkit);
     }
 
     return gr;
@@ -75,10 +75,10 @@ void runGame(GameRunner *game) {
         }
         updateDisplay(game->media, game->board1, game->board2);
 
-        // if (game->mode == MULTI_PLAYER) {
-        //     checkForBoardPacket(game->netkit, game->board2);
-        //     sendBoardPacket(game->netkit, game->board1);
-        // }
+        if (game->mode == MULTI_PLAYER) {
+            checkForBoardPacket(game->netkit, game->board2);
+            sendBoardPacket(game->netkit, game->board1);
+        }
         SDL_Delay(16);
     }
 }

@@ -27,6 +27,6 @@ struct GameRunner {
     NetKit *netkit;
 };
 
-GameRunner *createGame(GameMode gm, MPType mptype);
+GameRunner *createGame(GameMode gm, uint16_t localPort, uint16_t remotePort);
 void runGame(GameRunner *game);
 void destroyGame(GameRunner *game);

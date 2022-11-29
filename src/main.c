@@ -13,24 +13,18 @@ int main(int argc, char **argv) {
     }
 
     GameMode mode = SINGLE_PLAYER;
-    MPType mptype = MP_CLIENT;
+    uint16_t localPort = 0;
+    uint16_t remotePort = 0;
     if (argc > 1 && strncmp(argv[1], "multi", 5) == 0) {
-        if (argc < 3) {
-            log_error("multiplayer mode requires a client/server specification "
-                      "[client/server]");
-            exit(0);
-        }
-
-        if (strncmp(argv[2], "server", 6) == 0) {
-            mptype = MP_SERVER;
-        }
         mode = MULTI_PLAYER;
         log_info("Starting a new multi player game");
+        localPort = atoi(argv[2]);
+        remotePort = atoi(argv[3]);
     } else {
         log_info("Started a new single player game");
     }
 
-    GameRunner *game = createGame(mode, mptype);
+    GameRunner *game = createGame(mode, localPort, remotePort);
     srand(time(0));
 
     runGame(game);

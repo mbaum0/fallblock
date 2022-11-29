@@ -5,12 +5,13 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${workspaceFolder}/build/fallblock",
-            "args": [],
+            "args": ["multi", "client"],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
+            "miDebuggerPath": "/usr/bin/gdb",
             "setupCommands": [
                 {
                     "description": "Enable pretty-printing for gdb",
@@ -27,9 +28,18 @@
         {
             "type": "lldb",
             "request": "launch",
-            "name": "(lldb) Launch",
+            "name": "(lldb) Launch - One",
             "program": "${workspaceFolder}/build/fallblock",
-            "args": ["multi", "client"],
+            "args": ["multi", "3333", "3334"],
+            "cwd": "${workspaceFolder}",
+            "stopOnEntry": false,
+        },
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "(lldb) Launch - Two",
+            "program": "${workspaceFolder}/build/fallblock",
+            "args": ["multi", "3334", "3333"],
             "cwd": "${workspaceFolder}",
             "stopOnEntry": false,
         }

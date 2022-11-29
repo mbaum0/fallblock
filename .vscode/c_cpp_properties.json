@@ -20,6 +20,7 @@
                 "${workspaceFolder}/**",
                 "${workspaceFolder}/include/*",
                 "/opt/homebrew/include/SDL2/",
+                "/usr/local/Cellar/**",
                 "${workspaceFolder}/include"
             ],
             "configurationProvider": "ms-vscode.cmake-tools"

@@ -7,29 +7,38 @@
 
 #define PACKED __attribute__((__packed__))
 
-typedef struct WirePacket WirePacket;
+typedef struct WireBoard WireBoard;
 typedef struct WireTile WireTile;
 typedef struct NetKit NetKit;
+typedef struct SyncPacket SyncPacket;
 
-struct PACKED WireTile {
+struct SyncPacket {
+    uint32_t magic;
+    uint32_t stage;
+    uint32_t gameNum;
+};
+
+struct WireTile {
     uint8_t x;
     uint8_t y;
     uint8_t color;
-    uint8_t padding;
 };
 
-struct PACKED WirePacket {
+struct WireBoard {
     uint32_t level;
     uint32_t score;
     uint32_t numTiles;
-    WireTile tiles[];
+    WireTile tiles[GAME_HEIGHT * GAME_WIDTH];
 };
 
 struct NetKit {
     IPaddress remoteIP;
-    IPaddress localIP;
-    TCPsocket socket;
-    SDLNet_SocketSet socks;
+    UDPsocket sock;
+    UDPpacket *recvPacket;
+    SDLNet_SocketSet socketset;
+    uint32_t gameNum;
+    uint16_t localPort;
+    uint16_t remotePort;
     bool connected;
 };
 
@@ -52,7 +61,7 @@ struct NetKit {
  * @param dst Pointer to destination of serialized data
  * @return length of serialized data
  */
-uint32_t serializeBoard(GameBoard *board, uint8_t **dst);
+// uint32_t serializeBoard(GameBoard *board, uint8_t **dst);
 
 /**
  * @brief Deserialize byte data to a target gameboard
@@ -60,12 +69,13 @@ uint32_t serializeBoard(GameBoard *board, uint8_t **dst);
  * @param target GameBoard instance to update with src data
  * @param src Byte data containing a serialized WirePacket
  */
-void deserializeBoard(GameBoard *target, uint8_t *src);
+// void deserializeBoard(GameBoard *target, uint8_t *src);
 
-NetKit *initNetworking(void);
+NetKit *initNetworking(uint16_t localPort, uint16_t remotePort);
 void destroyNetworking(NetKit *kit);
 
 void checkForBoardPacket(NetKit *kit, GameBoard *board);
 void sendBoardPacket(NetKit *kit, GameBoard *board);
 void configureClient(NetKit *kit);
 void configureServer(NetKit *kit);
+void listenForConnections(NetKit *kit);
